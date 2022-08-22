@@ -4,7 +4,7 @@
 
 # Стек
 
-python3.9 или выше, Django, Postgres
+python3.10, Django, Postgres
 
 # Начало работы
 
