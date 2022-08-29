@@ -1,19 +1,34 @@
 version: '3.8'
 services:
   db:
-    container_name: ToDoManager
-    image: postgres:latest
+    container_name: ToDoManager_bd
+    image: postgres:14.5-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always
-    env_file:
-      - .env
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     ports:
       - ${DB_PORT:-5432}:5432
-
+  api:
+    container_name: ToDoManager_api
+    restart: always
+    build: .
+    command: python ToDoManager/manage.py runserver
+    ports:
+        - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+  front:
+    container_name: ToDoManager_front
+    build: .front/docker
+    ports:
+      - "4200:4200"
+    depends_on:
+      - api
 volumes:
   postgres_data:
