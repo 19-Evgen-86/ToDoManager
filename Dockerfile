@@ -8,5 +8,4 @@ RUN apt-get update \
     && apt-get -y install libpq-dev gcc
 RUN pip install -r requirements.txt
 COPY . /app/
-
-
+ENTRYPOINT ["sh", "migrate-start.sh"]

@@ -14,21 +14,25 @@ services:
       - ${DB_PORT:-5432}:5432
   api:
     container_name: ToDoManager_api
-    restart: always
     build: .
-    command: python ToDoManager/manage.py runserver
     ports:
-        - "8000:8000"
+      - "8000:8000"
     volumes:
       - .:/app
     depends_on:
       - db
+
   front:
     container_name: ToDoManager_front
-    build: .front/docker
+    build:
+      context: .
+      dockerfile: ./todo-list-frontend/docker/Dockerfile
+    volumes:
+      - .:/code
     ports:
       - "4200:4200"
     depends_on:
+      - db
       - api
 volumes:
   postgres_data:
