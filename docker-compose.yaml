@@ -21,12 +21,11 @@ services:
       - .:/app
     depends_on:
       - db
-
   front:
     container_name: ToDoManager_front
     build:
       context: .
-      dockerfile: ./todo-list-frontend/docker/Dockerfile
+      dockerfile: todo-list-frontend/docker/Dockerfile
     volumes:
       - .:/code
     ports:
