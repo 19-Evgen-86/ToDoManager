@@ -25,7 +25,7 @@ services:
     container_name: ToDoManager_front
     build:
       context: .
-      dockerfile: todo-list-frontend/docker/Dockerfile
+      dockerfile: frontend/docker/Dockerfile
     volumes:
       - .:/code
     ports:
