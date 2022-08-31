@@ -9,7 +9,7 @@ ADD frontend/package-lock.json .
 
 RUN npm install
 
-ADD frontend/docker .
+ADD frontend .
 
 RUN npm run build
 
