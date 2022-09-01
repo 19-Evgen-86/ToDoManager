@@ -21,17 +21,15 @@ services:
       - .:/app
     depends_on:
       - db
-#  front:
-#    container_name: ToDoManager_front
-#    build:
-#      context: .
-#      dockerfile: frontend/docker/Dockerfile
-#    volumes:
-#      - .:/code
-#    ports:
-#      - "4200:4200"
-#    depends_on:
-#      - db
-#      - api
+  front:
+    container_name: ToDoManager_front
+    image: frontend
+    volumes:
+      - .:/code
+    ports:
+      - "4200:4200"
+    depends_on:
+      - db
+      - api
 volumes:
   postgres_data:

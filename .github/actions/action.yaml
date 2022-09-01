@@ -1,0 +1,14 @@
+ame: ToDoManager
+on: [ push ]
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone code
+        uses: actions/checkout@v2
+      - name: docker build
+        run: docker build -t egrigorev/todomanager:$GITHUB_REF_NAME-$GITHUB_RUN_ID .
+      - name: docker login
+        run: echo ${{ secrets.docker_token }} | docker login -u ${{ secrets.docker_USERNAME }} --password-stdin
+      - name: docker push
+        run: docker push egrigorev/todomanager:$GITHUB_REF_NAME-$GITHUB_RUN_ID
