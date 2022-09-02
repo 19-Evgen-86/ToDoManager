@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  db:
+    container_name: ToDoManager_bd
+    image: postgres:14.5-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      HOST: ${DB_HOST}
+    ports:
+      - ${DB_PORT:-5432}:5432
+  api:
+    container_name: ToDoManager_api
+    image: egrigorev/todomanager:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+  front:
+    container_name: ToDoManager_front
+    image: egrigorev/frontend
+    volumes:
+      - .:/code
+    ports:
+      - "4200:4200"
+    depends_on:
+      - db
+      - api
+volumes:
+  postgres_data:

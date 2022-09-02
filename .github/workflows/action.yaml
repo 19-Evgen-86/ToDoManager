@@ -12,3 +12,39 @@ jobs:
         run: echo ${{ secrets.docker_token }} | docker login -u ${{ secrets.docker_USERNAME }} --password-stdin
       - name: docker push
         run: docker push egrigorev/todomanager:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build_and_push
+    env:
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      DEBUG: ${{ secrets.DEBUG }}
+    steps:
+      - name: clone code
+        uses: actions/checkout@v2
+      - name: render config
+        run: |
+          mkdir deploy
+          cat docker-compose-ci.yaml | envsubst>deploy/docker-compose.yaml
+      - name: copy to server
+        user: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          sourse: "deploy/docker-compose.yaml"
+          target: "todomanager"
+          strip_components: 1
+      - name: run dokcer-compose
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            cd todomanager
+            echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker-compose up -d
+
