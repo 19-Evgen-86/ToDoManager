@@ -24,7 +24,7 @@ services:
       - db
   front:
     container_name: ToDoManager_front
-    image: egrigorev/frontend
+    image: egrigorev/todo_front:latest
     volumes:
       - .:/code
     ports:
