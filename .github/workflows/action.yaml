@@ -28,14 +28,14 @@ jobs:
       - name: render config
         run: |
           mkdir deploy
-          cat docker-compose-ci.yaml | envsubst>deploy/docker-compose.yaml
+          cat docker-compose-ci.yaml | envsubst > deploy/docker-compose.yaml
       - name: copy to server
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
-          sourse: "deploy/docker-compose.yaml"
+          source: "deploy/docker-compose.yaml"
           target: "todomanager"
           strip_components: 1
       - name: run dokcer-compose
