@@ -12,6 +12,13 @@ services:
       POSTGRES_DB: ${DB_NAME}
     ports:
       - ${DB_PORT:-5432}:5432
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $DB_USER" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      back_nw:
   api:
     container_name: ToDoManager_api
     build: .
@@ -20,16 +27,28 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    networks:
+        back_nw:
   front:
     container_name: ToDoManager_front
-    image: egrigorev/todo_front:latest
+    image: sermalenk/skypro-front:lesson-34
     volumes:
       - .:/code
     ports:
-      - "4200:4200"
+      - "80:80"
     depends_on:
-      - db
-      - api
+      db:
+        condition: service_healthy
+      api:
+        condition: service_started
+    networks:
+      front_nw:
 volumes:
   postgres_data:
+networks:
+  back_nw:
+    driver: bridge
+  front_nw:
+    driver: bridge
