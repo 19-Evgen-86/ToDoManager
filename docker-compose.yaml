@@ -38,7 +38,7 @@ services:
     image: sermalenk/skypro-front:lesson-34
     restart: always
     volumes:
-      - .:/code
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     ports:
       - "80:80"
     depends_on:
@@ -46,6 +46,7 @@ services:
         condition: service_started
     networks:
       - front_nw
+
 
 volumes:
   postgres_data:
