@@ -23,6 +23,13 @@ services:
     container_name: ToDoManager_api
     build: .
     restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      HOST: ${DB_HOST}
+      DEBUG: ${DEBUG}
+      SECRET_KEY: ${SECRET_KEY}
     ports:
       - "8000:8000"
     volumes:
@@ -30,6 +37,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    command: python3 ToDoManager/manage.py runserver 0.0.0.0:8000
     networks:
       - front_nw
       - back_nw
