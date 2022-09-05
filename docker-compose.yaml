@@ -18,9 +18,10 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      back_nw:
+      - back_nw
   api:
     container_name: ToDoManager_api
+    restart: always
     build: .
     ports:
       - "8000:8000"
@@ -30,21 +31,22 @@ services:
       db:
         condition: service_healthy
     networks:
-        back_nw:
+      - front_nw
+      - back_nw
   front:
     container_name: ToDoManager_front
     image: sermalenk/skypro-front:lesson-34
+    restart: always
     volumes:
       - .:/code
     ports:
       - "80:80"
     depends_on:
-      db:
-        condition: service_healthy
       api:
         condition: service_started
     networks:
-      front_nw:
+      - front_nw
+
 volumes:
   postgres_data:
 networks:
