@@ -29,10 +29,11 @@ services:
       SECRET_KEY: ${SECRET_KEY}
     volumes:
       - ./nginx/static/:/app/static/
+      - .env:/app/todomanager/.env
     depends_on:
       db:
         condition: service_healthy
-    command: python3 manage.py runserver 0.0.0.0:8000
+    command: python3 ToDoManager/manage.py runserver 0.0.0.0:8000
     networks:
       - back_nw
       - front_nw
