@@ -25,26 +25,26 @@ jobs:
     steps:
       - name: clone code
         uses: actions/checkout@v2
-#      - name: render config
-#        run: |
-#          mkdir deploy
-#          cat docker-compose-ci.yaml | envsubst > deploy/docker-compose.yaml
-#      - name: copy to server
-#        uses: appleboy/scp-action@master
-#        with:
-#          host: ${{ secrets.HOST }}
-#          username: ${{ secrets.SSH_USERNAME }}
-#          password: ${{ secrets.SSH_PASSWORD }}
-#          source: "deploy/docker-compose.yaml"
-#          target: "todomanager"
-#          strip_components: 1
+      - name: render config
+        run: |
+          mkdir deploy
+          cat docker-compose-ci.yaml | envsubst > deploy/docker-compose.yaml
+      - name: copy to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          source: "deploy/docker-compose.yaml"
+          target: "todomanager"
+          strip_components: 1
       - name: run docker-compose
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
+          username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
-#          script: |
-#            cd todomanager
-#            echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker-compose up -d
+          script: |
+            cd todomanager
+            echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker-compose up -d
 
