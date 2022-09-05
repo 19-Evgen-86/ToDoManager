@@ -28,8 +28,8 @@ jobs:
       - name: render config
         run: |
           mkdir deploy
+          echo ${{ secrets.DB_USER }} >> deploy/.env
           cat docker-compose-ci.yaml | envsubst > deploy/docker-compose.yaml
-          cp migrate-start.sh deploy/
           cp -R ./nginx/ deploy/
       - name: copy to server
         uses: appleboy/scp-action@master
