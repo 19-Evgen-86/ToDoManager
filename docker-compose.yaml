@@ -21,8 +21,8 @@ services:
       - back_nw
   api:
     container_name: ToDoManager_api
-    restart: always
     build: .
+    restart: always
     ports:
       - "8000:8000"
     volumes:
@@ -46,7 +46,6 @@ services:
         condition: service_started
     networks:
       - front_nw
-
 
 volumes:
   postgres_data:
