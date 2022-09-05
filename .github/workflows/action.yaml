@@ -30,13 +30,14 @@ jobs:
           mkdir deploy
           cat docker-compose-ci.yaml | envsubst > deploy/docker-compose.yaml
           cp migrate-start.sh deploy/
+          cp ./nginx/default.conf deploy/nginx/
       - name: copy to server
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
-          source: "deploy/docker-compose.yaml, deploy/migrate-start.sh"
+          source: "deploy/*"
           target: "todomanager"
           strip_components: 1
       - name: run docker-compose
