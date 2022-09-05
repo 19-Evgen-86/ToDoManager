@@ -23,6 +23,7 @@ services:
     restart: always
     volumes:
       - ./nginx/static/:/app/static/
+      - .env:/app/ToDoManager/
     depends_on:
       db:
         condition: service_healthy

@@ -28,7 +28,10 @@ jobs:
       - name: render config
         run: |
           mkdir deploy
-          echo ${{ secrets.DB_USER }} >> deploy/.env
+          echo 'DB_NAME'=${{ secrets.DB_NAME }} >> deploy/.env
+          echo 'DB_USER'=${{ secrets.DB_USER }} >> deploy/.env
+          echo 'DB_PASSWORD'=${{ secrets.DB_PASSWORD }} >> deploy/.env
+          echo 'DB_HOST'=${{ secrets.DB_HOST }} >> deploy/.env
           cat docker-compose-ci.yaml | envsubst > deploy/docker-compose.yaml
           cp -R ./nginx/ deploy/
       - name: copy to server
@@ -48,5 +51,5 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             cd todomanager
-            echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker-compose up -d
+            docker-compose up -d
 
