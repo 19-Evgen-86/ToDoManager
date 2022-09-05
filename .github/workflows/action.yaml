@@ -30,7 +30,7 @@ jobs:
           mkdir deploy
           cat docker-compose-ci.yaml | envsubst > deploy/docker-compose.yaml
           cp migrate-start.sh deploy/
-          cp ./nginx/default.conf /deploy/nginx/
+          cp -R ./nginx/ deploy/
       - name: copy to server
         uses: appleboy/scp-action@master
         with:
