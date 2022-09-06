@@ -26,7 +26,6 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
       HOST: ${DB_HOST}
-      SECRET_KEY: ${SECRET_KEY}
     volumes:
       - ./nginx/static/:/app/ToDoManager/static/
       - .env:/app/.env
