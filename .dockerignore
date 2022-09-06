@@ -1,3 +1,9 @@
 venv
 .idea
-
+.env
+docker-compose*
+README.md
+nginx
+.dockerignore
+.gitignore
+.github
