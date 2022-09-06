@@ -27,12 +27,12 @@ services:
       POSTGRES_DB: ${DB_NAME}
       HOST: ${DB_HOST}
     volumes:
-      - ./nginx/static/:/app/ToDoManager/static/
       - .env:/app/.env
     depends_on:
       db:
         condition: service_healthy
-    command: python3 ToDoManager/manage.py runserver 0.0.0.0:8000
+    command: h -c "python ToDoManager/manage.py collectstatic &&
+             python ToDoManager/manage.py runserver 0.0.0.0:8000"
     networks:
       - back_nw
       - front_nw
