@@ -28,7 +28,7 @@ services:
       HOST: ${DB_HOST}
       SECRET_KEY: ${SECRET_KEY}
     volumes:
-      - ./nginx/static/:/app/static/
+      - ./nginx/static/:/app/ToDoManager/static/
       - .env:/app/.env
     depends_on:
       db:
