@@ -21,7 +21,7 @@ services:
     container_name: ToDoManager_api
     image: egrigorev/todomanager:$GITHUB_REF_NAME-$GITHUB_RUN_ID
     restart: always
-    environment:
+#    environment:
 #      POSTGRES_USER: ${DB_USER}
 #      POSTGRES_PASSWORD: ${DB_PASSWORD}
 #      POSTGRES_DB: ${DB_NAME}
