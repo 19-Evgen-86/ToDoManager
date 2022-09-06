@@ -1,0 +1,7 @@
+DB_NAME=ToDoManager
+DB_USER=ToDoManager
+DB_PASSWORD=ToDoManager
+DB_HOST=db
+DB_PORT=5432
+
+SECRET_KEY=django-insecure-c590p^2^l!8fy5coop4
