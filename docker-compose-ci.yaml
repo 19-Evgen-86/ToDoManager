@@ -49,7 +49,6 @@ services:
         condition: service_started
     networks:
       - front_nw
-
 volumes:
   postgres_data:
 networks:
