@@ -19,7 +19,7 @@ services:
       - back_nw
   api:
     container_name: ToDoManager_api
-    image: egrigorev/todomanager:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+    image: egrigorev/todomanager:latest
     restart: always
     environment:
       POSTGRES_USER: ${DB_USER}
