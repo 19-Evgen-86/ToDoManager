@@ -21,6 +21,11 @@ jobs:
       - name: render config
         run: |
           mkdir deploy
+          echo 'DB_NAME'=${{ secrets.DB_NAME }} >> deploy/.env
+          echo 'DB_USER'=${{ secrets.DB_USER }} >> deploy/.env
+          echo 'DB_PASSWORD'=${{ secrets.DB_PASSWORD }} >> deploy/.env
+          echo 'DB_HOST'=${{ secrets.DB_HOST }} >> deploy/.env
+          echo 'SECRET_KEY'=${{ secrets.SECRET_KEY }} >> deploy/.env
           cat docker-compose-ci.yaml | envsubst > deploy/docker-compose.yaml
           cp -R ./nginx/ deploy/
       - name: copy to server
