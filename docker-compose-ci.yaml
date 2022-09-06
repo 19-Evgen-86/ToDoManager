@@ -6,6 +6,8 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always
+    env_file:
+      - .env
     environment:
       POSTGRES_USER: $DB_USER
       POSTGRES_PASSWORD: $DB_PASSWORD
@@ -20,6 +22,8 @@ services:
   api:
     container_name: ToDoManager_api
     image: egrigorev/todomanager:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+    env_file:
+      - .env
     restart: always
     environment:
       POSTGRES_USER: $DB_USER
@@ -29,7 +33,7 @@ services:
       SECRET_KEY: $SECRET_KEY
     volumes:
       - ./nginx/static/:/app/static/
-#      - .env:/app/.env
+      - .env:/app/.env
     depends_on:
       db:
         condition: service_healthy
