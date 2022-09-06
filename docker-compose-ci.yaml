@@ -21,15 +21,15 @@ services:
     container_name: ToDoManager_api
     image: egrigorev/todomanager:$GITHUB_REF_NAME-$GITHUB_RUN_ID
     restart: always
-#     environment:
-#       POSTGRES_USER: ${DB_USER}
-#       POSTGRES_PASSWORD: ${DB_PASSWORD}
-#       POSTGRES_DB: ${DB_NAME}
-#       HOST: ${DB_HOST}
-#       SECRET_KEY: ${SECRET_KEY}
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      HOST: ${DB_HOST}
+      SECRET_KEY: ${SECRET_KEY}
     volumes:
       - ./nginx/static/:/app/static/
-#      - .env:/app/.env
+      - .env:/app/.env
     depends_on:
       db:
         condition: service_healthy
