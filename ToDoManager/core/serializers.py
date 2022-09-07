@@ -32,3 +32,8 @@ class UserCreateSerialize(serializers.ModelSerializer):
         user.set_password(user.password)
         user.save()
         return user
+
+class UserDeleteSerialize(serializers.ModelSerializer):
+    class Meta:
+        model =User
+        fields = ["id"]
