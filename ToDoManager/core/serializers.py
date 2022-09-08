@@ -1,5 +1,6 @@
 from django.contrib.auth import password_validation
 from django.core.validators import MinLengthValidator
+from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework import serializers
 
 from core.models import User
@@ -33,7 +34,25 @@ class UserCreateSerialize(serializers.ModelSerializer):
         user.save()
         return user
 
+
+class UserDetailSerialize(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "first_name", "last_name", "email"]
+
+
+class UserUpdateSerialize(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["username", "first_name", "last_name", "email"]
+
+
+    def save(self):
+        user = super().save()
+        return user
+
+
 class UserDeleteSerialize(serializers.ModelSerializer):
     class Meta:
-        model =User
+        model = User
         fields = ["id"]
