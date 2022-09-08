@@ -46,13 +46,12 @@ class UserUpdateSerialize(serializers.ModelSerializer):
         model = User
         fields = ["username", "first_name", "last_name", "email"]
 
-
     def save(self):
         user = super().save()
         return user
 
 
-class UserDeleteSerialize(serializers.ModelSerializer):
+class UserUpdatePwdSerialize(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id"]
+        fields = ["password"]
