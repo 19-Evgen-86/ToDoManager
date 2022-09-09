@@ -54,4 +54,18 @@ class UserUpdateSerialize(serializers.ModelSerializer):
 class UserUpdatePwdSerialize(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["password"]
+        fields = ["new_password", "old_password"]
+
+    def save(self):
+        user = super().save()
+        old_password = self.initial_data['old_password']
+        new_password = self.initial_data['new_password']
+
+        if not user.check_password(old_password):
+            raise serializers.ValidationError("Passwords don't match.")
+
+        password_validation.validate_password(new_password)
+
+        user.set_password(new_password)
+        user.save()
+        return user
