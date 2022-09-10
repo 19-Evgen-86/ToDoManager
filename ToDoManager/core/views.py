@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import ensure_csrf_cookie,csrf_exempt
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.views.decorators.http import require_http_methods
 from rest_framework import status
 from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, UpdateAPIView
@@ -36,15 +36,21 @@ def login_user(request):
     else:
         return JsonResponse({"message": "User not found! Check Username or Password"}, status=200)
 
-@method_decorator(ensure_csrf_cookie,name="dispatch")
-class UserProfileView(RetrieveUpdateDestroyAPIView):
 
+@csrf_exempt
+@require_http_methods(["GET"])
+def logout_user(request):
+    logout(request)
+    return JsonResponse({"message": "ok"}, status=200)
+
+@method_decorator(ensure_csrf_cookie, name="dispatch")
+class UserProfileView(RetrieveUpdateDestroyAPIView):
+    pagination_class = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         """
         Вывод профиля пользователя
         """
-
         user = get_object_or_404(User, pk=request.user.id)
         serializer = UserDetailSerialize(user)
         return Response(serializer.data)
@@ -53,9 +59,8 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
         """
         Полное обновдление данных пользователя
         """
-        data = json.loads(request.body)
         user = get_object_or_404(User, pk=request.user.id)
-        serializer = UserUpdateSerialize(user, data=data)
+        serializer = UserUpdateSerialize(user)
 
         return Response(serializer.data)
 
@@ -70,7 +75,6 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
 
         return Response(serializer.data)
 
-
     def delete(self, request, *args, **kwargs):
         logout(request)
         return Response("logout success", status=status.HTTP_204_NO_CONTENT)
@@ -80,5 +84,3 @@ class UserUpdatePwdView(UpdateAPIView):
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated]
     serializer_class = UserUpdatePwdSerialize
-
-
