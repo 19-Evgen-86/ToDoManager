@@ -1,13 +1,14 @@
 import json
 from typing import Dict
 
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, password_validation
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.views.decorators.http import require_http_methods
-from rest_framework import status
+from rest_framework import status, serializers
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -59,6 +60,21 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
 
 
 class UserUpdatePwdView(UpdateAPIView):
-    queryset = User.objects.all()
-    permission_classes = [IsAuthenticated]
-    serializer_class = UserUpdatePwdSerialize
+    def update(self, request, *args, **kwargs):
+        post_data: Dict = json.loads(request.body)
+        old_password: str = post_data["old_password"]
+        new_password: str = post_data["new_password"]
+
+        user = get_object_or_404(User, pk=self.request.user.id)
+
+        if not user.check_password(old_password):
+            raise serializers.ValidationError("Passwords don't match.")
+
+        try:
+            password_validation.validate_password(new_password)
+        except ValidationError as err:
+            raise serializers.ValidationError(err)
+
+        user.set_password(new_password)
+        user.save()
+        return Response("password update", status=200)
