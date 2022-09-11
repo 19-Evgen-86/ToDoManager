@@ -44,7 +44,7 @@ class UserDetailSerialize(serializers.ModelSerializer):
 class UserUpdateSerialize(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["username", "first_name", "last_name", "email"]
+        fields = ['id', "username", "first_name", "last_name", "email"]
 
     def save(self):
         user = super().save()

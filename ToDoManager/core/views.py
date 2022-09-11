@@ -43,37 +43,15 @@ def logout_user(request):
     logout(request)
     return JsonResponse({"message": "ok"}, status=200)
 
+
 @method_decorator(ensure_csrf_cookie, name="dispatch")
 class UserProfileView(RetrieveUpdateDestroyAPIView):
-    pagination_class = [IsAuthenticated]
+    model = User
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserUpdateSerialize
 
-    def get(self, request, *args, **kwargs):
-        """
-        Вывод профиля пользователя
-        """
-        user = get_object_or_404(User, pk=request.user.id)
-        serializer = UserDetailSerialize(user)
-        return Response(serializer.data)
-
-    def put(self, request, *args, **kwargs):
-        """
-        Полное обновдление данных пользователя
-        """
-        user = get_object_or_404(User, pk=request.user.id)
-        serializer = UserUpdateSerialize(user)
-
-        return Response(serializer.data)
-
-    def patch(self, request, *args, **kwargs):
-        """
-        Частичное обновление данных пользователя
-        """
-
-        data = json.loads(request.body)
-        user = get_object_or_404(User, pk=request.user.id)
-        serializer = UserUpdateSerialize(user, data=data)
-
-        return Response(serializer.data)
+    def get_object(self):
+        return self.request.user
 
     def delete(self, request, *args, **kwargs):
         logout(request)
