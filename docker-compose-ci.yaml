@@ -19,7 +19,7 @@ services:
       - back_nw
   api:
     container_name: ToDoManager_api
-    image: egrigorev/todomanager:latest
+    image: egrigorev/todomanager:${TAG_NAME:-latest}
     restart: always
     environment:
       POSTGRES_USER: ${DB_USER}
@@ -43,7 +43,7 @@ services:
       - "80:80"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./nginx/static:/opt/static/
+      - ./static:/opt/static/
     depends_on:
       api:
         condition: service_started
