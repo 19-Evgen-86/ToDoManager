@@ -39,8 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core',
+    "rest_framework",
     "social_django",
+    'core',
 ]
 
 MIDDLEWARE = [
@@ -140,12 +141,14 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = "core.User"
 
+SOCIAL_AUTH_POSTGRES_JSONFIELD = True
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
-#
+
 SOCIAL_AUTH_VK_OAUTH2_KEY = '51423050'
 SOCIAL_AUTH_VK_OAUTH2_SECRET = 'Zr1kTzxbk8Ic30JON83m'
 
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/logged-in/'
-SOCIAL_AUTH_LOGIN_ERROR_URL = '/login-error/'
-
-APPEND_SLASH=False
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
+SOCIAL_AUTH_RAISE_EXCEPTIONS = True
+RAISE_EXCEPTIONS = True
