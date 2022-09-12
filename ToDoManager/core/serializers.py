@@ -1,8 +1,7 @@
-from django.contrib.auth import password_validation, authenticate, login
+from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError, AuthenticationFailed, NotAuthenticated
-from rest_framework.fields import CurrentUserDefault
 
 from core.models import User
 
@@ -28,7 +27,6 @@ class UserCreateSerialize(serializers.ModelSerializer):
         passwd_rep = attrs['password_repeat']
         if passwd != passwd_rep:
             raise ValidationError("Passwords don't match.")
-
         return attrs
 
     def create(self, validated_data):

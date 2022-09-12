@@ -109,8 +109,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 ]
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
     'social_core.backends.vk.VKOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
 ]
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -141,7 +141,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = "core.User"
 
-SOCIAL_AUTH_POSTGRES_JSONFIELD = True
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
 
 SOCIAL_AUTH_VK_OAUTH2_KEY = os.getenv('VK_OAUTH2_KEY')
@@ -149,6 +148,8 @@ SOCIAL_AUTH_VK_OAUTH2_SECRET = os.getenv('VK_OAUTH2_SECRET')
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
+
 SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
-SOCIAL_AUTH_RAISE_EXCEPTIONS = True
-RAISE_EXCEPTIONS = True
+SOCIAL_AUTH_VK_EXTRA_DATA = [('email', 'email')]
+
+
