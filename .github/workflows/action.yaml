@@ -1,4 +1,4 @@
-name: ToDoManager
+name: todo_manager
 on:
   push:
     tags:
