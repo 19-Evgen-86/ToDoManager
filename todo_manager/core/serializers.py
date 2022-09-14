@@ -73,7 +73,6 @@ class UserUpdatePwdSerialize(serializers.ModelSerializer):
 
     def validate(self, attrs):
         old_password = attrs['old_password']
-        new_password = attrs['new_password']
         if not (user := attrs['user']):
             raise NotAuthenticated
         if not user.check_password(old_password):
