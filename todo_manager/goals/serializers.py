@@ -1,18 +1,8 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
-from core.models import User
-from goals.models import GoalsCategory, Goal, GoalComment
-
-
-class UserSerializer(serializers.ModelSerializer):
-    """
-    Серелизатлор для пользователя
-    """
-
-    class Meta:
-        model = User
-        fields = ['id', "username", 'first_name', 'last_name', 'email']
+from core.serializers import UserUpdateSerialize
+from goals.models import GoalCategory, Goal, GoalComment
 
 
 class CreateGoalsCategorySerializer(serializers.ModelSerializer):
@@ -22,8 +12,8 @@ class CreateGoalsCategorySerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
-        model = GoalsCategory
-        read_only_fields = ['id', 'create', 'update', 'user']
+        model = GoalCategory
+        read_only_fields = ['id', 'created', 'updated', 'user']
         fields = "__all__"
 
 
@@ -31,10 +21,10 @@ class GoalsCategorySerializer(serializers.ModelSerializer):
     """
     Серелизатор для отображения, изменения и удаления категории
     """
-    user = UserSerializer(read_only=True)
+    user = UserUpdateSerialize(read_only=True)
 
     class Meta:
-        model = GoalsCategory
+        model = GoalCategory
         fields = "__all__"
         read_only_fields = ("id", "created", "updated", "user", "category")
 
@@ -60,7 +50,7 @@ class GoalCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
 
-        validated_data['category'] = get_object_or_404(GoalsCategory, pk=self.context['request'].data['category'])
+        validated_data['category'] = get_object_or_404(GoalCategory, pk=self.context['request'].data['category'])
         goal = Goal.objects.create(**validated_data)
         return goal
 
@@ -69,7 +59,7 @@ class GoalsSerializer(serializers.ModelSerializer):
     """
     Серелизатор для отображения, изменения и удаления цели
     """
-    user = UserSerializer(read_only=True)
+    user = UserUpdateSerialize(read_only=True)
 
     class Meta:
         model = Goal
@@ -79,7 +69,7 @@ class GoalsSerializer(serializers.ModelSerializer):
 
 class GoalCommentsCreateSerializer(serializers.ModelSerializer):
     created = serializers.DateTimeField(required=False)
-
+    updated = serializers.DateTimeField(required=False)
     class Meta:
         model = GoalComment
         fields = "__all__"
