@@ -19,3 +19,4 @@ class GoalAdmin(admin.ModelAdmin):
 class GoalCommentAdmin(admin.ModelAdmin):
     list_display = ["text"]
     search_fields = ["text"]
+    readonly_fields = ['goal']

@@ -70,6 +70,7 @@ class GoalsSerializer(serializers.ModelSerializer):
 class GoalCommentsCreateSerializer(serializers.ModelSerializer):
     created = serializers.DateTimeField(required=False)
     updated = serializers.DateTimeField(required=False)
+
     class Meta:
         model = GoalComment
         fields = "__all__"
@@ -81,12 +82,7 @@ class GoalCommentsCreateSerializer(serializers.ModelSerializer):
 
 
 class GoalsCommentsSerializer(serializers.ModelSerializer):
-    goal = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='title'
-    )
-
+    goal = serializers.SlugRelatedField(read_only=True, slug_field="title")
     class Meta:
         model = GoalComment
-        fields = "__all__"
-        read_only_fields = ("id", "created", 'goal')
+        fields = ["id", "text", "goal"]

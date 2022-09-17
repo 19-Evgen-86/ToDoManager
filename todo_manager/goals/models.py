@@ -23,7 +23,7 @@ class GoalCategory(DateFieldsMixin):
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
 
-    title = models.CharField(verbose_name="Название", max_length=255)
+    title = models.CharField(verbose_name="Название", max_length=255,unique=True)
     user = models.ForeignKey(User, verbose_name='Автор', on_delete=models.PROTECT)
 
     is_deleted = models.BooleanField(default=False, verbose_name='Удалена')
@@ -49,7 +49,7 @@ class Goal(DateFieldsMixin):
         high = 3, "Высокий"
         critical = 4, "Критический"
 
-    title = models.CharField(verbose_name="Название", max_length=255)
+    title = models.CharField(verbose_name="Название", max_length=255,unique=True)
     description = models.CharField(verbose_name='Описание', max_length=255)
     category = models.ForeignKey(GoalCategory, verbose_name="Категория", on_delete=models.PROTECT)
     user = models.ForeignKey(User, verbose_name='Автор', on_delete=models.PROTECT)

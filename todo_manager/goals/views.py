@@ -120,8 +120,8 @@ class GoalsCommentListView(ListAPIView):
     model = GoalComment
     permission_classes = [IsAuthenticated]
     serializer_class = GoalsCommentsSerializer
-    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.OrderingFilter]
+    search_fields = ['text']
     filterset_fields = ['goal']
     ordering = ["-created"]
 
@@ -133,8 +133,6 @@ class GoalsCommentView(RetrieveUpdateDestroyAPIView):
     model = GoalComment
     permission_classes = [IsAuthenticated]
     serializer_class = GoalsCommentsSerializer
-    filter_backends = [filters.OrderingFilter]
 
-    ordering = ["-created"]
     def get_queryset(self):
-        return Goal.objects.all()
+        return GoalComment.objects.all()

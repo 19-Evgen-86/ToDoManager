@@ -53,6 +53,9 @@ jobs:
           cat docker-compose-ci.yaml | envsubst > deploy/docker-compose.yaml
           cp -R ./nginx/ deploy/
           cp -R ./todo_manager/static/ deploy/
+          echo 1
+          echo $TAG_NAME
+          echo 2
       - name: copy to server
         uses: appleboy/scp-action@master
         with:
