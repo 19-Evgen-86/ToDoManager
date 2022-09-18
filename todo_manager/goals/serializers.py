@@ -87,6 +87,9 @@ class GoalCommentsCreateSerializer(serializers.ModelSerializer):
 
 
 class GoalsCommentsSerializer(serializers.ModelSerializer):
+    """
+    Серелизатор для отображения, изменения и удаления комментария
+    """
     user = UserUpdateSerialize(read_only=True)
     goal = serializers.SlugRelatedField(read_only=True, slug_field="title")
 

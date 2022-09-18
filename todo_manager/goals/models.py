@@ -64,6 +64,7 @@ class Goal(DateFieldsMixin):
 
 
 class GoalComment(DateFieldsMixin):
+
     class Meta:
         verbose_name = "Комментраий"
         verbose_name_plural = "Комментраии"
