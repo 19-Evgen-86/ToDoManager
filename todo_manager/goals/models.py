@@ -67,9 +67,10 @@ class GoalComment(DateFieldsMixin):
     class Meta:
         verbose_name = "Комментраий"
         verbose_name_plural = "Комментраии"
-
+    user = models.ForeignKey(User,verbose_name="Автор коментария",on_delete=models.CASCADE)
     text = models.TextField(verbose_name='Комментарий')
     goal = models.ForeignKey(Goal, verbose_name='Цель', on_delete=models.CASCADE)
 
     def __str__(self):
         return f"коментарий к {self.goal.title}"
+

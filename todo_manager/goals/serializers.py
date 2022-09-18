@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
+from core.models import User
 from core.serializers import UserUpdateSerialize
 from goals.models import GoalCategory, Goal, GoalComment
 
@@ -68,21 +69,27 @@ class GoalsSerializer(serializers.ModelSerializer):
 
 
 class GoalCommentsCreateSerializer(serializers.ModelSerializer):
+    """
+        Серелизатор для создания коммнентария
+    """
     created = serializers.DateTimeField(required=False)
     updated = serializers.DateTimeField(required=False)
-
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     class Meta:
         model = GoalComment
         fields = "__all__"
 
     def create(self, validated_data):
+        # validated_data['user'] = get_object_or_404(User, pk=self.context['request'].user.id)
         validated_data['goal'] = get_object_or_404(Goal, pk=self.context['request'].data['goal'])
         goal_comment = GoalComment.objects.create(**validated_data)
         return goal_comment
 
 
 class GoalsCommentsSerializer(serializers.ModelSerializer):
+    user = UserUpdateSerialize(read_only=True)
     goal = serializers.SlugRelatedField(read_only=True, slug_field="title")
+
     class Meta:
         model = GoalComment
-        fields = ["id", "text", "goal"]
+        fields = ["id", "text", "goal", 'user']
