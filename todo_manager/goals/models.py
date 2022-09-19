@@ -50,7 +50,7 @@ class Goal(DateFieldsMixin):
         critical = 4, "Критический"
 
     title = models.CharField(verbose_name="Название", max_length=255,unique=True)
-    description = models.CharField(verbose_name='Описание', max_length=255)
+    description = models.CharField(verbose_name='Описание', max_length=255,null=True)
     category = models.ForeignKey(GoalCategory, verbose_name="Категория", on_delete=models.PROTECT)
     user = models.ForeignKey(User, verbose_name='Автор', on_delete=models.PROTECT)
     status = models.PositiveSmallIntegerField(verbose_name='Статус', choices=Status.choices, default=Status.to_do)
