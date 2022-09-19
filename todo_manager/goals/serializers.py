@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from core.models import User
 from core.serializers import UserUpdateSerialize
-from goals.models import GoalCategory, Goal, GoalComment
+from goals.models import GoalCategory, Goal, GoalComment, Board, BoardParticipant
 
 
 class CreateGoalsCategorySerializer(serializers.ModelSerializer):
@@ -75,6 +75,7 @@ class GoalCommentsCreateSerializer(serializers.ModelSerializer):
     created = serializers.DateTimeField(required=False)
     updated = serializers.DateTimeField(required=False)
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
         model = GoalComment
         fields = "__all__"
@@ -96,3 +97,23 @@ class GoalsCommentsSerializer(serializers.ModelSerializer):
     class Meta:
         model = GoalComment
         fields = ["id", "text", "goal", 'user']
+
+
+class BoardCreateSerializer(serializers.ModelSerializer):
+    """
+    Серелизатор для создания доски
+    """
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = Board
+        read_only_fields = ("id", "created", "updated")
+        fields = "__all__"
+
+    def create(self, validated_data):
+        user = validated_data.pop("user")
+        board = Board.objects.create(**validated_data)
+        BoardParticipant.objects.create(
+            user=user, board=board, role=BoardParticipant.Role.owner
+        )
+        return board
