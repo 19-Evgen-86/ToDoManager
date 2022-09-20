@@ -21,6 +21,7 @@ class DateFieldsMixin(models.Model):
         self.updated = timezone.now()
         return super().save(*args, **kwargs)
 
+
 class Board(DateFieldsMixin):
     """
     Модель доски целей
@@ -64,6 +65,8 @@ class BoardParticipant(DateFieldsMixin):
     role = models.PositiveSmallIntegerField(
         verbose_name="Роль", choices=Role.choices, default=Role.owner
     )
+
+
 class GoalCategory(DateFieldsMixin):
     """
     модель категорий целей
@@ -134,5 +137,3 @@ class GoalComment(DateFieldsMixin):
 
     def __str__(self):
         return f"коментарий к {self.goal.title}"
-
-

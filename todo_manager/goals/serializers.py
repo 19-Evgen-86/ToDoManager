@@ -117,3 +117,38 @@ class BoardCreateSerializer(serializers.ModelSerializer):
             user=user, board=board, role=BoardParticipant.Role.owner
         )
         return board
+
+
+class BoardParticipantSerializer(serializers.ModelSerializer):
+    """
+    Серелизатор для работы с участниками доски
+
+    """
+    role = serializers.ChoiceField(
+        required=True, choices=BoardParticipant.editable_choices
+    )
+    user = serializers.SlugRelatedField(
+        slug_field="username", queryset=User.objects.all()
+    )
+
+    class Meta:
+        model = BoardParticipant
+        fields = "__all__"
+        read_only_fields = ("id", "created", "updated", "board")
+
+
+class BoardSerializer(serializers.ModelSerializer):
+    """
+    Серелизатор для работы доской
+    """
+    participants = BoardParticipantSerializer(many=True)
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = Board
+        fields = "__all__"
+        read_only_fields = ("id", "created", "updated")
+
+    def update(self, instance, validated_data):
+        # ваш код для работы с участниками
+        return instance
