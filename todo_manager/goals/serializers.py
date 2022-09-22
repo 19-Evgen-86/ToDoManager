@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
@@ -23,11 +24,12 @@ class GoalsCategorySerializer(serializers.ModelSerializer):
     Серелизатор для отображения, изменения и удаления категории
     """
     user = UserUpdateSerialize(read_only=True)
+    board = serializers.SlugRelatedField(read_only=True, many=True, slug_field="title")
 
     class Meta:
         model = GoalCategory
         fields = "__all__"
-        read_only_fields = ("id", "created", "updated", "user", "category")
+        read_only_fields = ("id", "created", "updated", "user", "category", "board")
 
 
 # -------------------------------------------------------------------------
@@ -125,7 +127,7 @@ class BoardParticipantSerializer(serializers.ModelSerializer):
 
     """
     role = serializers.ChoiceField(
-        required=True, choices=BoardParticipant.editable_choices
+        required=True, choices=BoardParticipant.Role
     )
     user = serializers.SlugRelatedField(
         slug_field="username", queryset=User.objects.all()
@@ -150,5 +152,37 @@ class BoardSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "created", "updated")
 
     def update(self, instance, validated_data):
-        # ваш код для работы с участниками
+        owner = validated_data.pop("user")
+        new_participants = validated_data.pop("participants")
+        new_by_id = {part["user"].id: part for part in new_participants}
+
+        old_participants = instance.participants.exclude(user=owner)
+        with transaction.atomic():
+            for old_participant in old_participants:
+                if old_participant.user_id not in new_by_id:
+                    old_participant.delete()
+                else:
+                    if (
+                            old_participant.role
+                            != new_by_id[old_participant.user_id]["role"]
+                    ):
+                        old_participant.role = new_by_id[old_participant.user_id][
+                            "role"
+                        ]
+                        old_participant.save()
+                    new_by_id.pop(old_participant.user_id)
+            for new_part in new_by_id.values():
+                BoardParticipant.objects.create(
+                    board=instance, user=new_part["user"], role=new_part["role"]
+                )
+
+            instance.title = validated_data["title"]
+            instance.save()
+
         return instance
+
+
+class BoardListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Board
+        fields = "__all__"

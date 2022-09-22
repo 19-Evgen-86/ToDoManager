@@ -8,7 +8,8 @@ from goals.filters import GoalDateFilter
 from goals.models import GoalCategory, Goal, GoalComment, Board
 from goals.permissions import BoardPermissions
 from goals.serializers import CreateGoalsCategorySerializer, GoalsCategorySerializer, GoalCreateSerializer, \
-    GoalsSerializer, GoalCommentsCreateSerializer, GoalsCommentsSerializer, BoardSerializer
+    GoalsSerializer, GoalCommentsCreateSerializer, GoalsCommentsSerializer, BoardSerializer, BoardListSerializer, \
+    BoardCreateSerializer
 
 
 class CreateGoalsCategory(CreateAPIView):
@@ -39,7 +40,8 @@ class GoalCategoryListView(ListAPIView):
     search_fields = ['title']
 
     def get_queryset(self):
-        return GoalCategory.objects.select_related('user').filter(is_deleted=False, user=self.request.user.id)
+        return GoalCategory.objects.select_related('user').filter(is_deleted=False, user=self.request.user.id,
+                                                                  board__participants__user=self.request.user.id)
 
 
 class GoalsCategoryView(RetrieveUpdateDestroyAPIView):
@@ -140,6 +142,15 @@ class GoalsCommentView(RetrieveUpdateDestroyAPIView):
         return GoalComment.objects.all()
 
 
+class BoardCreateView(CreateAPIView):
+    """
+    View для создания цели
+    """
+    model = Goal
+    permission_classes = [IsAuthenticated]
+    serializer_class = BoardCreateSerializer
+
+
 class BoardView(RetrieveUpdateDestroyAPIView):
     model = Board
     permission_classes = [IsAuthenticated, BoardPermissions]
@@ -147,7 +158,7 @@ class BoardView(RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         # Обратите внимание на фильтрацию – она идет через participants
-        return Board.objects.filter(participants__user=self.request.user, is_deleted=False)
+        return Board.objects.filter(participants__user=self.request.user.id, is_deleted=False)
 
     def perform_destroy(self, instance: Board):
         # При удалении доски помечаем ее как is_deleted,
@@ -160,3 +171,18 @@ class BoardView(RetrieveUpdateDestroyAPIView):
                 status=Goal.Status.archived
             )
         return instance
+
+
+class BoardListView(ListAPIView):
+    """
+    View для отображения списка комментариев
+    """
+
+    model = GoalComment
+    permission_classes = [IsAuthenticated]
+    serializer_class = BoardListSerializer
+    filter_backends = [filters.OrderingFilter]
+    ordering = ["title"]
+
+    def get_queryset(self):
+        return Board.objects.filter(participants__user=self.request.user.id, is_deleted=False)
