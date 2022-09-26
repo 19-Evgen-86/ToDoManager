@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from goals.filters import GoalDateFilter
 from goals.models import GoalCategory, Goal, GoalComment, Board
-from goals.permissions import BoardPermissions
+from goals.permissions import BoardPermissions, PermissionsCU
 from goals.serializers import CreateGoalsCategorySerializer, GoalsCategorySerializer, GoalCreateSerializer, \
     GoalsSerializer, GoalCommentsCreateSerializer, GoalsCommentsSerializer, BoardSerializer, BoardListSerializer, \
     BoardCreateSerializer
@@ -17,7 +17,7 @@ class CreateGoalsCategory(CreateAPIView):
     View для создания категории задач
     """
     model = GoalCategory
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, PermissionsCU, BoardPermissions]
     serializer_class = CreateGoalsCategorySerializer
 
 
@@ -34,14 +34,15 @@ class GoalCategoryListView(ListAPIView):
         filters.OrderingFilter,
         # фильтр поиска
         filters.SearchFilter,
+        DjangoFilterBackend
     ]
     ordering_fields = ["title", "created"]
     ordering = ["title"]
     search_fields = ['title']
+    filterset_fields = ['board', "user"]
 
     def get_queryset(self):
-        return GoalCategory.objects.select_related('user').filter(is_deleted=False, user=self.request.user.id,
-                                                                  board__participants__user=self.request.user.id)
+        return GoalCategory.objects.filter(is_deleted=False, board__participants__user=self.request.user.id)
 
 
 class GoalsCategoryView(RetrieveUpdateDestroyAPIView):
@@ -49,11 +50,12 @@ class GoalsCategoryView(RetrieveUpdateDestroyAPIView):
     View для отображения, изменения и удаления категории
     """
     model = GoalCategory
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, PermissionsCU, BoardPermissions]
     serializer_class = GoalsCategorySerializer
 
     def get_queryset(self):
-        return GoalCategory.objects.select_related('user').filter(is_deleted=False, user=self.request.user.id)
+        return GoalCategory.objects.select_related('user').select_related('board').filter(is_deleted=False,
+                                                                                          participants__user=self.request.user.id)
 
     def perform_destroy(self, instance):
         instance.is_deleted = True
@@ -153,16 +155,13 @@ class BoardCreateView(CreateAPIView):
 
 class BoardView(RetrieveUpdateDestroyAPIView):
     model = Board
-    permission_classes = [IsAuthenticated, BoardPermissions]
+    permission_classes = [IsAuthenticated, PermissionsCU, BoardPermissions]
     serializer_class = BoardSerializer
 
     def get_queryset(self):
-        # Обратите внимание на фильтрацию – она идет через participants
         return Board.objects.filter(participants__user=self.request.user.id, is_deleted=False)
 
     def perform_destroy(self, instance: Board):
-        # При удалении доски помечаем ее как is_deleted,
-        # «удаляем» категории, обновляем статус целей
         with transaction.atomic():
             instance.is_deleted = True
             instance.save()

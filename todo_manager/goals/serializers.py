@@ -12,10 +12,11 @@ class CreateGoalsCategorySerializer(serializers.ModelSerializer):
     Серелизатор для создания категории
     """
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    board = serializers.SlugRelatedField(queryset=Board.objects.all(), slug_field='id')
 
     class Meta:
         model = GoalCategory
-        read_only_fields = ['id', 'created', 'updated', 'user']
+        read_only_fields = ['id', 'created', 'updated', 'user', "board"]
         fields = "__all__"
 
 
@@ -24,7 +25,7 @@ class GoalsCategorySerializer(serializers.ModelSerializer):
     Серелизатор для отображения, изменения и удаления категории
     """
     user = UserUpdateSerialize(read_only=True)
-    board = serializers.SlugRelatedField(read_only=True, many=True, slug_field="title")
+    board = serializers.SlugRelatedField(read_only=True, slug_field="title")
 
     class Meta:
         model = GoalCategory
@@ -40,6 +41,7 @@ class GoalCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     created = serializers.DateTimeField(required=False)
     updated = serializers.DateTimeField(required=False)
+    board = serializers.SlugRelatedField(slug_field="title", queryset=Board.objects.all())
 
     class Meta:
         model = Goal
@@ -63,6 +65,7 @@ class GoalsSerializer(serializers.ModelSerializer):
     Серелизатор для отображения, изменения и удаления цели
     """
     user = UserUpdateSerialize(read_only=True)
+    board = serializers.SlugRelatedField(read_only=True, slug_field="id")
 
     class Meta:
         model = Goal

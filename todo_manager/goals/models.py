@@ -80,8 +80,7 @@ class GoalCategory(DateFieldsMixin):
     user = models.ForeignKey(User, verbose_name='Автор', on_delete=models.PROTECT)
     is_deleted = models.BooleanField(default=False, verbose_name='Удалена')
     board = models.ForeignKey(
-        Board, verbose_name="Доска", on_delete=models.PROTECT, related_name="categories"
-    )
+        Board, verbose_name="Доска", on_delete=models.PROTECT, related_name="categories")
 
     def __str__(self):
         return self.title
