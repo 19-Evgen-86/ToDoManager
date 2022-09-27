@@ -41,7 +41,6 @@ class GoalCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     created = serializers.DateTimeField(required=False)
     updated = serializers.DateTimeField(required=False)
-    board = serializers.SlugRelatedField(slug_field="title", queryset=Board.objects.all())
 
     class Meta:
         model = Goal
@@ -65,7 +64,7 @@ class GoalsSerializer(serializers.ModelSerializer):
     Серелизатор для отображения, изменения и удаления цели
     """
     user = UserUpdateSerialize(read_only=True)
-    board = serializers.SlugRelatedField(read_only=True, slug_field="id")
+    board = serializers.SlugRelatedField(read_only=True, slug_field="title")
 
     class Meta:
         model = Goal
