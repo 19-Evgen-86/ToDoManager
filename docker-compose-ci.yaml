@@ -1,5 +1,7 @@
 version: '3.8'
+
 services:
+
   db:
     container_name: ToDoManager_bd
     image: postgres:14.5-alpine
@@ -37,7 +39,7 @@ services:
       - front_nw
   front:
     container_name: ToDoManager_front
-    image: sermalenk/skypro-front:lesson-35
+    image: sermalenk/skypro-front:lesson-37
     restart: always
     ports:
       - "80:80"

@@ -22,9 +22,17 @@ class PermissionsCU(permissions.BasePermission):
     def has_permission(self, request, view):
         if not request.user.is_authenticated:
             return False
+        user = get_object_or_404(BoardParticipant, pk=request.user.id)
+        if (request.method not in permissions.SAFE_METHODS) and (
+                user.role in [BoardParticipant.Role.owner, BoardParticipant.Role.writer]):
+            return True
+        return False
 
-        if get_object_or_404(BoardParticipant, pk=request.user.id).role not in [BoardParticipant.Role.owner,
-                                                                                BoardParticipant.Role.writer]:
+
+class PermissionsComment(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if not request.user.is_authenticated:
             return False
-        return True
-
+        if (request.method not in permissions.SAFE_METHODS) and (GoalComment.user.id == request.user.id):
+            return True
+        return False

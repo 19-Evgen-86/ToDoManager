@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from goals.filters import GoalDateFilter
 from goals.models import GoalCategory, Goal, GoalComment, Board
-from goals.permissions import BoardPermissions, PermissionsCU
+from goals.permissions import BoardPermissions, PermissionsCU, PermissionsComment
 from goals.serializers import CreateGoalsCategorySerializer, GoalsCategorySerializer, GoalCreateSerializer, \
     GoalsSerializer, GoalCommentsCreateSerializer, GoalsCommentsSerializer, BoardSerializer, BoardListSerializer, \
     BoardCreateSerializer
@@ -17,7 +17,7 @@ class CreateGoalsCategory(CreateAPIView):
     View для создания категории задач
     """
     model = GoalCategory
-    permission_classes = [IsAuthenticated, PermissionsCU, BoardPermissions]
+    permission_classes = [IsAuthenticated, PermissionsCU]
     serializer_class = CreateGoalsCategorySerializer
 
 
@@ -136,7 +136,7 @@ class GoalsCommentListView(ListAPIView):
 
 class GoalsCommentView(RetrieveUpdateDestroyAPIView):
     model = GoalComment
-    permission_classes = [IsAuthenticated, PermissionsCU]
+    permission_classes = [IsAuthenticated, PermissionsCU, PermissionsComment]
     serializer_class = GoalsCommentsSerializer
 
     def get_queryset(self):
