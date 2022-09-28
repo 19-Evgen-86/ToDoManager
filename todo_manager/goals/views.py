@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from goals.filters import GoalDateFilter
 from goals.models import GoalCategory, Goal, GoalComment, Board
-from goals.permissions import BoardPermissions, PermissionsCU, PermissionsComment
+from goals.permissions import BoardPermissions, PermissionsCU
 from goals.serializers import CreateGoalsCategorySerializer, GoalsCategorySerializer, GoalCreateSerializer, \
     GoalsSerializer, GoalCommentsCreateSerializer, GoalsCommentsSerializer, BoardSerializer, BoardListSerializer, \
     BoardCreateSerializer
