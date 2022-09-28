@@ -136,7 +136,7 @@ class GoalsCommentListView(ListAPIView):
 
 class GoalsCommentView(RetrieveUpdateDestroyAPIView):
     model = GoalComment
-    permission_classes = [IsAuthenticated, PermissionsCU, PermissionsComment]
+    permission_classes = [IsAuthenticated, PermissionsCU]
     serializer_class = GoalsCommentsSerializer
 
     def get_queryset(self):
