@@ -1,6 +1,6 @@
 from django.urls import path
 
-from bot.management.commands.runbot import verify
+from bot.views import verify
 
 urlpatterns = [
     path('verify', verify, name='verify_code')

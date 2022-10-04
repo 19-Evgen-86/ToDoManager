@@ -56,6 +56,18 @@ services:
         condition: service_started
     networks:
       - front_nw
+  bot:
+    container_name: ToDoManager_bot
+    build: .
+    volumes:
+      - .env:/app/.env
+      - ./todo_manager/todo_manager:/app/todo_manager/todo_manager/
+    depends_on:
+      db:
+        condition: service_healthy
+      api:
+        condition: service_started
+
 
 volumes:
   postgres_data:
