@@ -5,7 +5,7 @@ from core.models import User
 
 # Create your models here.
 class TgUser(models.Model):
-    user = models.ForeignKey(User, on_delete=models.PROTECT, null=True)
-    tg_user = models.IntegerField()
-    tg_chat = models.IntegerField()
-    verification_code = models.IntegerField()
+    user = models.ForeignKey(User, on_delete=models.PROTECT, null=True,default=None)
+    tg_user = models.CharField(max_length=255, null=True, blank=True,default=None)
+    tg_chat = models.BigIntegerField()
+    verification_code = models.CharField(max_length=255,default=None)

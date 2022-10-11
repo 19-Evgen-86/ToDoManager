@@ -1,7 +1,8 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List,Optional
 
 import marshmallow
+from dataclasses_json import config
 
 """
 "message":{"message_id":1,"from":
@@ -36,7 +37,7 @@ class MessageFrom:
 @dataclass()
 class Message:
     message_id: int
-    from_: MessageFrom
+    from_: MessageFrom = field(metadata=config(field_name="from"))
     chat: Chat
     text: str
 

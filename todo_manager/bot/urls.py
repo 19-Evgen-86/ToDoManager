@@ -1,7 +1,7 @@
 from django.urls import path
 
-from bot.views import verify
+from bot.views import VerifiedView
 
 urlpatterns = [
-    path('verify', verify, name='verify_code')
+    path('verify', VerifiedView.as_view(), name='verify_code')
 ]

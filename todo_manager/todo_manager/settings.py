@@ -155,6 +155,8 @@ SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
 
 SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
 SOCIAL_AUTH_VK_EXTRA_DATA = [('email', 'email')]
+
+TG_TOKEN = '5425707450:AAFKjl4RtyTh4CjrkLnnWXq0Xs0dl6EkC-4'
 #
 # LOGGING = {
 #     'version': 1,

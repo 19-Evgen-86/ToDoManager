@@ -6,7 +6,7 @@ import marshmallow_dataclass
 
 
 class TgClient:
-    def __init__(self, token):
+    def __init__(self, token: str):
         self.token = token
 
     def get_url(self, method: str):
@@ -14,23 +14,14 @@ class TgClient:
 
     def get_updates(self, offset: int = 0, timeout: int = 60) -> GetUpdatesResponse:
         cl = requests.get(self.get_url(f'getUpdates?offset={offset}&timeout={timeout}'))
-        res = cl.json()
-
-        for item in res['result']:
-            item['message']['from_'] = item['message'].pop('from')
 
         responseShema: marshmallow_dataclass = marshmallow_dataclass.class_schema(GetUpdatesResponse)
-        response: GetUpdatesResponse = responseShema().load(res)
+        response: GetUpdatesResponse = responseShema().load(cl.json())
         return response
 
     def send_message(self, chat_id: int, text: str) -> GetUpdatesResponse:
         cl = requests.get(f"https://api.telegram.org/bot{self.token}/sendMessage?chat_id={chat_id}&text={text}")
-        res = cl.json()
-        res['result']["from_"] = res['result'].pop('from')
+
         responseShema: marshmallow_dataclass = marshmallow_dataclass.class_schema(SendMessageResponse)
-        response: GetUpdatesResponse = responseShema().load(res)
+        response: GetUpdatesResponse = responseShema().load(cl.json())
         return response
-
-
-# tg_client = TgClient("5425707450:AAFKjl4RtyTh4CjrkLnnWXq0Xs0dl6EkC-4")
-# tg_client.get_updates()
