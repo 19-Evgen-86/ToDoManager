@@ -1,5 +1,7 @@
 version: '3.8'
+
 services:
+
   db:
     container_name: ToDoManager_bd
     image: postgres:14.5-alpine
@@ -31,13 +33,30 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    command: python ToDoManager/manage.py runserver 0.0.0.0:8000
+    command: python todo_manager/manage.py runserver 0.0.0.0:8000
     networks:
       - back_nw
       - front_nw
+  bot:
+    container_name: ToDoManager_bot
+    image: egrigorev/todomanager:${TAG_NAME:-latest}
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      HOST: ${DB_HOST}
+    volumes:
+      - .env:/app/.env
+    depends_on:
+      db:
+        condition: service_healthy
+    command: python todo_manager/manage.py runbot
+    networks:
+      - back_nw
   front:
     container_name: ToDoManager_front
-    image: sermalenk/skypro-front:lesson-35
+    image: sermalenk/skypro-front:lesson-37
     restart: always
     ports:
       - "80:80"
@@ -49,6 +68,7 @@ services:
         condition: service_started
     networks:
       - front_nw
+
 volumes:
   postgres_data:
 networks:

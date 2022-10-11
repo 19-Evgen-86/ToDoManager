@@ -1,4 +1,4 @@
-"""ToDoManager URL Configuration
+"""todo_manager URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.1/topics/http/urls/
@@ -19,6 +19,9 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('core/', include('core.urls')),
-    path("oauth/", include("social_django.urls", namespace="social"))
+    path('goals/', include('goals.urls')),
+    path("bot/", include("bot.urls")),
+    path("oauth/", include("social_django.urls", namespace="social")),
+
 
 ]
