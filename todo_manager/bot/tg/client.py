@@ -17,6 +17,5 @@ class TgClient:
         return GetUpdatesResponse(**cl.json())
 
     def send_message(self, chat_id: int, text: str) -> SendMessageResponse:
-        cl = requests.get(f"https://api.telegram.org/bot{self.token}/sendMessage?chat_id={chat_id}&text={text}")
-
+        cl = requests.post(self.get_url("sendMessage"), json={'chat_id': chat_id, "text": text})
         return SendMessageResponse(**cl.json())

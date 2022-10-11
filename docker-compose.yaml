@@ -56,17 +56,25 @@ services:
         condition: service_started
     networks:
       - front_nw
-#  bot:
-#    container_name: ToDoManager_bot
-#    build: .
-#    volumes:
-#      - .env:/app/.env
-#      - ./todo_manager/todo_manager:/app/todo_manager/todo_manager/
-#    depends_on:
-#      db:
-#        condition: service_healthy
-#      api:
-#        condition: service_started
+  bot:
+    container_name: ToDoManager_bot
+    build: .
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME}
+      HOST: ${DB_HOST}
+      DEBUG: ${DEBUG}
+      SECRET_KEY: ${SECRET_KEY}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - .env:/app/.env
+    depends_on:
+      db:
+        condition: service_healthy
+    command: python3 todo_manager/manage.py runbot
+    networks:
+      - front_nw
 
 
 volumes:
