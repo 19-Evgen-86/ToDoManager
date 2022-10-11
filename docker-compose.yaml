@@ -74,9 +74,7 @@ services:
         condition: service_healthy
     command: python3 todo_manager/manage.py runbot
     networks:
-      - front_nw
-
-
+      - back_nw
 volumes:
   postgres_data:
 networks:
