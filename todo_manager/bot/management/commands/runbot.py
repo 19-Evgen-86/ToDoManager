@@ -86,11 +86,8 @@ class Command(BaseCommand):
                 self.storage.reset(msg.chat.id)
                 self.tg_client.send_message(chat_id=msg.chat.id, text='[canceled]')
 
-            case '/':
+            case "/":
                 self.tg_client.send_message(chat_id=msg.chat.id, text='неизвестная команда')
-                self.tg_client.send_message(chat_id=msg.chat.id,
-                                            text='список комманд:\n"/goals - список целей"\n"/create - создать цель"\n'
-                                                 '"/cancel - очистить данные\n"')
 
     def message(self, msg: Message):
         tg_user, _ = TgUser.objects.select_related("user").get_or_create(tg_chat=msg.chat.id, defaults={
