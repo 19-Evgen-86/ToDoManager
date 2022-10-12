@@ -70,8 +70,11 @@ services:
     volumes:
       - .env:/app/.env
     depends_on:
+
       db:
         condition: service_healthy
+      api:
+        condition: service_started
     command: python3 todo_manager/manage.py runbot
     networks:
       - back_nw
