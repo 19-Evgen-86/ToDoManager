@@ -4,14 +4,16 @@ from core.models import User
 
 
 class Command(BaseCommand):
+    """
+    Создание суперпользователя при первом запуске приложения
+    """
 
     def handle(self, *args, **options):
         if User.objects.count() == 0:
-
-            username = "admin"
-            password = 'admin'
+            username: str = "admin"
+            password: str = 'admin'
             print(f'Creating account for {username}')
-            admin = User.objects.create_superuser(username=username, password=password)
+            admin: User = User.objects.create_superuser(username=username, password=password)
             admin.is_active = True
             admin.is_admin = True
             admin.save()

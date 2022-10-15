@@ -9,7 +9,7 @@ from goals.models import GoalCategory, Goal, GoalComment, Board, BoardParticipan
 
 class CreateGoalsCategorySerializer(serializers.ModelSerializer):
     """
-    Серелизатор для создания категории
+    сериализатор для создания категории
     """
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     board = serializers.SlugRelatedField(queryset=Board.objects.all(), slug_field='id')
@@ -22,7 +22,7 @@ class CreateGoalsCategorySerializer(serializers.ModelSerializer):
 
 class GoalsCategorySerializer(serializers.ModelSerializer):
     """
-    Серелизатор для отображения, изменения и удаления категории
+    сериализатор для отображения, изменения и удаления категории
     """
     user = UserUpdateSerialize(read_only=True)
     board = serializers.SlugRelatedField(read_only=True, slug_field="title")
@@ -36,7 +36,7 @@ class GoalsCategorySerializer(serializers.ModelSerializer):
 # -------------------------------------------------------------------------
 class GoalCreateSerializer(serializers.ModelSerializer):
     """
-    Серелизатор для создания цели
+    сериализатор для создания цели
     """
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     created = serializers.DateTimeField(required=False)
@@ -61,7 +61,7 @@ class GoalCreateSerializer(serializers.ModelSerializer):
 
 class GoalsSerializer(serializers.ModelSerializer):
     """
-    Серелизатор для отображения, изменения и удаления цели
+    сериализатор для отображения, изменения и удаления цели
     """
     user = UserUpdateSerialize(read_only=True)
     board = serializers.SlugRelatedField(read_only=True, slug_field="title")
@@ -74,7 +74,7 @@ class GoalsSerializer(serializers.ModelSerializer):
 
 class GoalCommentsCreateSerializer(serializers.ModelSerializer):
     """
-        Серелизатор для создания коммнентария
+        сериализатор для создания коммнентария
     """
     created = serializers.DateTimeField(required=False)
     updated = serializers.DateTimeField(required=False)
@@ -93,7 +93,7 @@ class GoalCommentsCreateSerializer(serializers.ModelSerializer):
 
 class GoalsCommentsSerializer(serializers.ModelSerializer):
     """
-    Серелизатор для отображения, изменения и удаления комментария
+    сериализатор для отображения, изменения и удаления комментария
     """
     user = UserUpdateSerialize(read_only=True)
     goal = serializers.SlugRelatedField(read_only=True, slug_field="title")
@@ -105,7 +105,7 @@ class GoalsCommentsSerializer(serializers.ModelSerializer):
 
 class BoardCreateSerializer(serializers.ModelSerializer):
     """
-    Серелизатор для создания доски
+    сериализатор для создания доски
     """
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
@@ -125,7 +125,7 @@ class BoardCreateSerializer(serializers.ModelSerializer):
 
 class BoardParticipantSerializer(serializers.ModelSerializer):
     """
-    Серелизатор для работы с участниками доски
+    сериализатор для работы с участниками доски
 
     """
     role = serializers.ChoiceField(
@@ -143,7 +143,7 @@ class BoardParticipantSerializer(serializers.ModelSerializer):
 
 class BoardSerializer(serializers.ModelSerializer):
     """
-    Серелизатор для работы доской
+    сериализатор для работы доской
     """
     participants = BoardParticipantSerializer(many=True)
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
@@ -187,4 +187,5 @@ class BoardSerializer(serializers.ModelSerializer):
 class BoardListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Board
-        fields = "__all__"
+        fields = ['id','is_deleted','title']
+

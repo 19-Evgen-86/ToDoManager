@@ -11,10 +11,16 @@ from core.serializers import UserCreateSerialize, UserUpdateSerialize, \
 
 # Create your views here.
 class UserCreateView(CreateAPIView):
+    """
+        Создание пользователя
+    """
     serializer_class = UserCreateSerialize
 
 
 class LoginUser(GenericAPIView):
+    """
+        Авторизация пользователя
+    """
     serializer_class = LoginSerialize
 
     def post(self, request, *args, **kwargs):
@@ -26,6 +32,9 @@ class LoginUser(GenericAPIView):
 
 
 class UserProfileView(RetrieveUpdateDestroyAPIView):
+    """
+       Обновление данных пользователя
+    """
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated]
     serializer_class = UserUpdateSerialize
@@ -39,6 +48,9 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
 
 
 class UserUpdatePwdView(UpdateAPIView):
+    """
+        Обновление пароля пользователя
+    """
     permission_classes = [IsAuthenticated]
     serializer_class = UserUpdatePwdSerialize
 

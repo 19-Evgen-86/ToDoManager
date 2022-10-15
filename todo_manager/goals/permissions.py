@@ -5,7 +5,10 @@ from goals.models import BoardParticipant, GoalComment
 
 
 class BoardPermissions(permissions.BasePermission):
+    """
+    Разрещения на доступ к доске.
 
+    """
     def has_object_permission(self, request, view, obj):
         if not request.user.is_authenticated:
             return False

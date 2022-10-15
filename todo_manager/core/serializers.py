@@ -7,6 +7,10 @@ from core.models import User
 
 
 class PasswordField(serializers.CharField):
+    """
+    сериализатор для пароля
+    """
+
     def __init__(self, **kwargs):
         kwargs.setdefault('write_only', True)
         kwargs['style'] = {'input_type': 'password'}
@@ -15,39 +19,45 @@ class PasswordField(serializers.CharField):
 
 
 class UserCreateSerialize(serializers.ModelSerializer):
-    password = PasswordField(required=True)
-    password_repeat = PasswordField(required=True)
+    """
+      сериализатор для создания пользователя
+    """
+    password: str = PasswordField(required=True)
+    password_repeat: str = PasswordField(required=True)
 
     class Meta:
         model = User
         fields = ['id', "username", 'first_name', 'last_name', 'email', 'password', 'password_repeat']
 
     def validate(self, attrs):
-        passwd = attrs['password']
-        passwd_rep = attrs['password_repeat']
+        passwd: str = attrs['password']
+        passwd_rep: str = attrs['password_repeat']
         if passwd != passwd_rep:
             raise ValidationError("Passwords don't match.")
         return attrs
 
     def create(self, validated_data):
         del validated_data['password_repeat']
-        user = User.objects.create(**validated_data)
+        user: User = User.objects.create(**validated_data)
         user.set_password(user.password)
         user.save()
         return user
 
 
 class LoginSerialize(serializers.ModelSerializer):
-    password = PasswordField(required=True)
-    username = serializers.CharField(required=True)
+    """
+    сериализатор для авторизации пользователя
+    """
+    password: str = PasswordField(required=True)
+    username: str = serializers.CharField(required=True)
 
     class Meta:
         model = User
         fields = ["username", 'password']
 
     def create(self, validated_data):
-        username = validated_data['username']
-        password = validated_data['password']
+        username: str = validated_data['username']
+        password: str = validated_data['password']
 
         if not (user := authenticate(username=username, password=password)):
             raise AuthenticationFailed
@@ -55,24 +65,32 @@ class LoginSerialize(serializers.ModelSerializer):
 
 
 class UserUpdateSerialize(serializers.ModelSerializer):
+    """
+       сериализатор для обновления пользователя
+       """
+
     class Meta:
         model = User
         fields = ['id', "username", "first_name", "last_name", "email"]
 
 
 class UserUpdatePwdSerialize(serializers.ModelSerializer):
-    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    old_password = PasswordField(required=True)
-    new_password = PasswordField(required=True)
+    """
+       сериализатор для обновления пароля пользователя
+    """
+    user: User = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    old_password: str = PasswordField(required=True)
+    new_password: str = PasswordField(required=True)
 
     class Meta:
         model = User
-        fields = ['user','old_password','new_password']
+        fields = ['user', 'old_password', 'new_password']
+
     def create(self, validated_data):
         raise NotImplementedError
 
     def validate(self, attrs):
-        old_password = attrs['old_password']
+        old_password: str = attrs['old_password']
         if not (user := attrs['user']):
             raise NotAuthenticated
         if not user.check_password(old_password):

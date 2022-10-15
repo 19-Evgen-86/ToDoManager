@@ -5,8 +5,12 @@ from bot.models import TgUser
 
 
 class VerifiedSerializer(serializers.ModelSerializer):
+    """
+        сериализатор для верефикации пользователя бота
+    """
     verification_code = serializers.CharField(write_only=True)
-    chat_id = serializers.SlugField(source='tg_chat',read_only=True)
+    chat_id = serializers.SlugField(source='tg_chat', read_only=True)
+
     class Meta:
         model = TgUser
         fields = ('tg_user', 'chat_id', 'verification_code')

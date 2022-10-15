@@ -9,6 +9,7 @@ from todo_manager import settings
 
 
 class VerifiedView(GenericAPIView):
+
     model = TgUser
     permission_classes = [IsAuthenticated]
     serializer_class = VerifiedSerializer
