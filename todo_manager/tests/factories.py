@@ -10,7 +10,8 @@ class UserFactory(DjangoModelFactory):
         model = User
 
     username = factory.Faker("name")
-    password = 'test4321'
+
+    password = factory.PostGenerationMethodCall('set_password', str(factory.Faker("password")))
 
 
 class BoardFactory(DjangoModelFactory):
@@ -27,6 +28,7 @@ class BoardParticipantFactory(DjangoModelFactory):
     board = factory.SubFactory(BoardFactory)
     user = factory.SubFactory(UserFactory)
     role = 1
+
 
 class GoalCategoryFactory(DjangoModelFactory):
     class Meta:
