@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.utils import timezone
 
 from goals.models import Goal
 from goals.serializers import GoalCreateSerializer
@@ -13,7 +14,8 @@ class GoalSerializersTestCase(TestCase):
         """
         goal: Goal = GoalFactory()
         data = GoalCreateSerializer(goal).data
-        ex_data = {'id': goal.id, 'created': goal.created, 'updated': goal.updated,
+        ex_data = {'id': goal.id, 'created': timezone.localtime(goal.created).isoformat(),
+                   'updated': timezone.localtime(goal.updated).isoformat(),
                    'title': goal.title, 'description': goal.description, 'status': goal.status,
                    'priority': goal.priority,
                    'due_date': goal.due_date,
