@@ -19,6 +19,4 @@ class GoalCategoryAPITestCase(APITestCase):
         response = self.client.post('/goals/goal_category/create', data)
         self.assertEqual(response.status_code, 201)
 
-    def test_goals_category_list_view(self):
-        response = self.client.get('/goals/goal_category/list')
-        self.assertEqual(response.status_code, 200)
+

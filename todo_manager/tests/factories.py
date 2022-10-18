@@ -1,8 +1,11 @@
 import factory
+import factory.fuzzy as fuzzy
 from factory.django import DjangoModelFactory
 
 from core.models import User
 from goals.models import Goal, Board, GoalCategory, BoardParticipant, GoalComment
+
+ROLE_IDS = [x for x in BoardParticipant.Role]
 
 
 class UserFactory(DjangoModelFactory):
@@ -27,7 +30,7 @@ class BoardParticipantFactory(DjangoModelFactory):
 
     board = factory.SubFactory(BoardFactory)
     user = factory.SubFactory(UserFactory)
-    role = 1
+    role = fuzzy.FuzzyChoice(ROLE_IDS)
 
 
 class GoalCategoryFactory(DjangoModelFactory):

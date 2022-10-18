@@ -1,6 +1,9 @@
+from django.urls import reverse
+from django.utils import timezone
 from rest_framework.test import APITestCase, APIClient
 
-from tests.factories import UserFactory
+from goals.models import Board, BoardParticipant
+from tests.factories import UserFactory, BoardFactory, BoardParticipantFactory
 
 
 # DJANGO_SETTINGS_MODULE=todo_manager.settings
@@ -21,5 +24,18 @@ class BoardAPITestCase(APITestCase):
         self.assertEqual(response.data['title'], 'test')
 
     def test_board_list_view(self):
-        response = self.client.get('/goals/board/list')
+        boards: list(Board) = BoardFactory.create_batch(3)
+        for board in boards:
+            BoardParticipantFactory(board=board, user=self.user)
+        self.assertEqual(BoardParticipant.objects.count(), 3)
+        response = self.client.get(reverse('board_list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(response.json(), list)
+        self.assertEqual(len(response.json()), 3)
+
+    def test_retrieve_board(self):
+        board: Board = BoardFactory()
+        board_participant: BoardParticipant = BoardParticipantFactory(board=board, user=self.user,
+                                                                      role=BoardParticipant.Role.owner)
+        response = self.client.get(reverse('board_view', kwargs={'pk': board.pk}))
         self.assertEqual(response.status_code, 200)

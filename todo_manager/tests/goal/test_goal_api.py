@@ -20,7 +20,3 @@ class GoalAPITestCase(APITestCase):
         response = self.client.post('/goals/goal/create', data)
         self.assertEqual(response.status_code, 201)
 
-    def test_goal_list_view(self):
-        goals = GoalFactory.create_batch(2)
-        response = self.client.get('/goals/goal/list')
-        self.assertEqual(response.status_code, 200)

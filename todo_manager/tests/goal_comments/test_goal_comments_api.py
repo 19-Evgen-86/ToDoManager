@@ -1,3 +1,4 @@
+from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
 
 from tests.factories import UserFactory, GoalFactory
@@ -16,9 +17,5 @@ class GoalCommentAPITestCase(APITestCase):
     def test_goal_comment_create_view(self):
         goal = GoalFactory()
         data = {'text': 'test_comment', 'goal': goal.id}
-        response = self.client.post('/goals/goal_comment/create', data)
+        response = self.client.post(reverse('goal_comment_create', data))
         self.assertEqual(response.status_code, 201)
-
-    def test_goal_comment_list_view(self):
-        response = self.client.get('/goals/goal_comment/list')
-        self.assertEqual(response.status_code, 200)
