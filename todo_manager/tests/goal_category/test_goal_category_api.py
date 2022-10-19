@@ -15,6 +15,7 @@ class GoalCategoryAPITestCase(APITestCase):
 
     def test_goals_category_create_view(self):
         board = BoardFactory()
+
         data = {'title': 'test_category', 'board': board.id}
         response = self.client.post('/goals/goal_category/create', data)
         self.assertEqual(response.status_code, 201)

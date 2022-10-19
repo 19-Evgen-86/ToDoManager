@@ -20,3 +20,4 @@ class GoalAPITestCase(APITestCase):
         response = self.client.post('/goals/goal/create', data)
         self.assertEqual(response.status_code, 201)
 
+
