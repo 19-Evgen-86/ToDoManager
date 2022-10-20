@@ -1,6 +1,8 @@
+
 from django.shortcuts import get_object_or_404
 from rest_framework import permissions
 
+from core.models import User
 from goals.models import BoardParticipant, GoalComment
 
 

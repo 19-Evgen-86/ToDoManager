@@ -19,11 +19,9 @@ class GoalCommentAPITestCase(APITestCase):
     def test_goal_comment_create_view(self):
         board = BoardFactory()
         BoardParticipantFactory(board=board, user=self.user, role=BoardParticipant.Role.owner)
-        category = GoalCategoryFactory(board=board)
+        category = GoalCategoryFactory(board=board, user=self.user)
         goal = GoalFactory(user=self.user, category=category)
-
         data = {'text': 'test_comment', 'goal': goal.id}
 
         response = self.client.post(reverse('goal_comment_create'), data)
         self.assertEqual(response.status_code, 201)
-

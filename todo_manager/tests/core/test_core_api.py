@@ -17,18 +17,20 @@ class CoreAPICreateUserTestCase(APITestCase):
 
     def test_create_user(self):
         data = {'username': 'test_user', "password": "pwd12345", "password_repeat": "pwd12345"}
-        expect_data = {
-            'id': 1,
-            "username": 'test_user',
-            'first_name': '',
-            'last_name': '',
-            'email': '',
-        }
 
         response = self.client.post(self.url, data)
         user = User.objects.last()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(User.objects.count(), 1)
+        user: User = User.objects.last()
+        data = {'username': 'test_user', "password": "pwd12345", "password_repeat": "pwd12345"}
+        expect_data = {
+            'id': user.id,
+            "username": 'test_user',
+            'first_name': '',
+            'last_name': '',
+            'email': '',
+        }
         self.assertEqual(response.json(), expect_data)
         self.assertNotEqual(user.password, 'pwd12345')
         self.assertTrue(user.check_password('pwd12345'))
