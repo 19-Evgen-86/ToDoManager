@@ -8,8 +8,10 @@ from bot.observer.base import State
 from bot.observer.memory import MemoryStorage
 from bot.tg.client import TgClient
 from bot.tg.dc import Message
-from goals.models import Goal, GoalCategory
+from goals.models import Goal, GoalCategory, BoardParticipant
 from todo_manager import settings
+
+import logging
 
 
 class Command(BaseCommand):
@@ -18,6 +20,7 @@ class Command(BaseCommand):
         super().__init__(*args, *kwargs)
         self.tg_client: TgClient = TgClient(settings.TG_TOKEN)
         self.storage: MemoryStorage = MemoryStorage()
+        self.logger = logging.getLogger(__name__)
 
     def unverified_user(self, msg: Message, user: TgUser):
         """
@@ -65,15 +68,18 @@ class Command(BaseCommand):
                         self.storage.reset(msg.chat.id)
                         self.tg_client.send_message(chat_id=msg.chat.id, text='[canceled]')
                     case _:
+                        self.logger.warning(f"не неизвестная команда {command}")
                         self.tg_client.send_message(chat_id=msg.chat.id, text='неизвестная команда')
             # если цифра
             case value if value.isdigit():
                 # проверяем в каком состоянии находиться бот
                 match state := self.storage.get_state(msg.chat.id):
-                    # если пользователь запросил списо категорий (команда /create)
+                    # если пользователь запросил список категорий (команда /create)
                     case State.CATEGORY_LIST_SELECTED:
                         cat_id: int = int(msg.text)
                         if GoalCategory.objects.filter(board__participants__user_id=user.user.id,
+                                                       board__participants__role__in=[BoardParticipant.Role.owner,
+                                                                                      BoardParticipant.Role.writer],
                                                        is_deleted=False,
                                                        id=cat_id).exists():
                             self.storage.update_data(chat_id=msg.chat.id, cat_id=cat_id)
@@ -92,8 +98,12 @@ class Command(BaseCommand):
                                             )
                         self.tg_client.send_message(chat_id=msg.chat.id, text='Цель создана')
                         self.storage.reset(msg.chat.id)
+                    case _:
+                        self.logger.warning(f"неизвестное состояние {state}")
+
             case _:
                 self.tg_client.send_message(chat_id=msg.chat.id, text='неизвестная команда')
+                self.logger.warning(f"не неизвестная команда {msg.text}")
 
     def message(self, msg: Message):
         """
