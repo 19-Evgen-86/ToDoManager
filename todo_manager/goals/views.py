@@ -74,7 +74,7 @@ class GoalCreateView(CreateAPIView):
     View для создания цели
     """
     model = Goal
-    permission_classes = [IsAuthenticated, PermissionsCU]
+    permission_classes = [IsAuthenticated, BoardPermissions, PermissionsCU]
     serializer_class = GoalCreateSerializer
 
 

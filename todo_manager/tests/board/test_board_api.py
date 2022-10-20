@@ -44,5 +44,3 @@ class BoardAPITestCase(APITestCase):
         BoardParticipantFactory(board=board, user=self.user, role=BoardParticipant.Role.owner)
         response = self.client.get(reverse('board_view', kwargs={'pk': board.pk}))
         self.assertEqual(response.status_code, 200)
-
-

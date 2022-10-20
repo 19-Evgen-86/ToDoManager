@@ -16,7 +16,7 @@ class GoalAPITestCase(APITestCase):
 
     def test_goal_create_view(self):
         board: Board = BoardFactory()
-        BoardParticipantFactory(board=board, user=self.user, role=BoardParticipant.Role.owner)
+        BoardParticipantFactory(board=board, user=self.user, role=BoardParticipant.Role.writer)
         category: GoalCategory = GoalCategoryFactory(board=board, user=self.user)
         data = {'title': 'test_category', 'category': category.pk, 'due_date': timezone.now()}
         response = self.client.post(reverse('goal_create'), data)
@@ -26,8 +26,19 @@ class GoalAPITestCase(APITestCase):
         board: Board = BoardFactory()
         user = UserFactory()
         BoardParticipantFactory(board=board, user=user, role=BoardParticipant.Role.owner)
-        category: GoalCategory = GoalCategoryFactory(board=board, user=user)
+        category: GoalCategory = GoalCategoryFactory(board=board, user=self.user)
+
         data = {'title': 'test_category', 'category': category.pk, 'due_date': timezone.now()}
         response = self.client.post(reverse('goal_create'), data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json(), {'category': ['not owner of category']})
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.json(), {'detail': 'you are not a member of this board'})
+
+    def test_create_participant_reader(self):
+        board: Board = BoardFactory()
+        BoardParticipantFactory(board=board, user=self.user, role=BoardParticipant.Role.reader)
+        category: GoalCategory = GoalCategoryFactory(board=board, user=self.user)
+        data = {'title': 'test_category', 'category': category.pk, 'due_date': timezone.now()}
+        response = self.client.post(reverse('goal_create'), data)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.json(), {'detail': 'You do not have permission to perform this action.'})
