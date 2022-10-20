@@ -1,5 +1,6 @@
 from django.urls import reverse
 from django.utils import timezone
+from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
 from goals.models import GoalCategory, Board, BoardParticipant
@@ -13,8 +14,6 @@ class GoalAPITestCase(APITestCase):
         self.client = APIClient()
         self.client.force_login(self.user)
 
-
-
     def test_goal_create_view(self):
         board: Board = BoardFactory()
         BoardParticipantFactory(board=board, user=self.user, role=BoardParticipant.Role.owner)
@@ -22,3 +21,13 @@ class GoalAPITestCase(APITestCase):
         data = {'title': 'test_category', 'category': category.pk, 'due_date': timezone.now()}
         response = self.client.post(reverse('goal_create'), data)
         self.assertEqual(response.status_code, 201)
+
+    def test_create_not_participant(self):
+        board: Board = BoardFactory()
+        user = UserFactory()
+        BoardParticipantFactory(board=board, user=user, role=BoardParticipant.Role.owner)
+        category: GoalCategory = GoalCategoryFactory(board=board, user=user)
+        data = {'title': 'test_category', 'category': category.pk, 'due_date': timezone.now()}
+        response = self.client.post(reverse('goal_create'), data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json(), {'category': ['not owner of category']})
