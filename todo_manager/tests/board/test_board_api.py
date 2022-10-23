@@ -17,7 +17,7 @@ class BoardAPITestCase(APITestCase):
     def test_board_create_view(self):
         data = {'title': 'test'}
         response = self.client.post('/goals/board/create', data)
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         board: Board = Board.objects.last()
 
         expect_data = {
@@ -44,3 +44,13 @@ class BoardAPITestCase(APITestCase):
         BoardParticipantFactory(board=board, user=self.user, role=BoardParticipant.Role.owner)
         response = self.client.get(reverse('board_view', kwargs={'pk': board.pk}))
         self.assertEqual(response.status_code, 200)
+
+    def test_retrieve_update_board(self):
+        board = BoardFactory()
+        BoardParticipantFactory(board=board, user=self.user, role=BoardParticipant.Role.owner)
+
+        response = self.client.put(reverse('board_view', kwargs={'pk': board.pk}),
+                                   {"title": "new_title", 'participants': []})
+        self.assertEqual(response.status_code, 200)
+        board.refresh_from_db(fields=('title',))
+        self.assertEqual(board.title, 'new_title')
