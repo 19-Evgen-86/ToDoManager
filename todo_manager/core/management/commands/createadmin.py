@@ -1,6 +1,11 @@
+import os
+
 from django.core.management import BaseCommand
+from dotenv import load_dotenv
 
 from core.models import User
+
+load_dotenv()
 
 
 class Command(BaseCommand):
@@ -10,8 +15,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if User.objects.count() == 0:
-            username: str = "admin"
-            password: str = 'admin'
+            username: str = os.getenv("ADMIN", 'admin')
+            password: str = os.getenv("ADMIN_PASSWORD", 'admin')
             print(f'Creating account for {username}')
             admin: User = User.objects.create_superuser(username=username, password=password)
             admin.is_active = True
