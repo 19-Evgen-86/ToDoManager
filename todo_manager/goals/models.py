@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.utils import timezone
 
@@ -6,7 +8,7 @@ from core.models import User
 
 class DateFieldsMixin(models.Model):
     """
-    вспомогательный миксин класс с общими полями.
+    Вспомогательный миксин класс с общими полями.
     """
 
     class Meta:
@@ -31,8 +33,8 @@ class Board(DateFieldsMixin):
         verbose_name = "Доска"
         verbose_name_plural = "Доски"
 
-    title = models.CharField(verbose_name="Название", max_length=255)
-    is_deleted = models.BooleanField(verbose_name="Удалена", default=False)
+    title: str = models.CharField(verbose_name="Название", max_length=255)
+    is_deleted: bool = models.BooleanField(verbose_name="Удалена", default=False)
 
 
 class BoardParticipant(DateFieldsMixin):
@@ -76,10 +78,10 @@ class GoalCategory(DateFieldsMixin):
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
 
-    title = models.CharField(verbose_name="Название", max_length=255, unique=True)
-    user = models.ForeignKey(User, verbose_name='Автор', on_delete=models.PROTECT)
-    is_deleted = models.BooleanField(default=False, verbose_name='Удалена')
-    board = models.ForeignKey(
+    title: str = models.CharField(verbose_name="Название", max_length=255, unique=True)
+    user: User = models.ForeignKey(User, verbose_name='Автор', on_delete=models.PROTECT)
+    is_deleted: bool = models.BooleanField(default=False, verbose_name='Удалена')
+    board: Board = models.ForeignKey(
         Board, verbose_name="Доска", on_delete=models.PROTECT, related_name="categories")
 
     def __str__(self):
@@ -107,15 +109,15 @@ class Goal(DateFieldsMixin):
         high = 3, "Высокий"
         critical = 4, "Критический"
 
-    title = models.CharField(verbose_name="Название", max_length=255, unique=True)
-    description = models.CharField(verbose_name='Описание', max_length=255, null=True, blank=True)
-    category = models.ForeignKey(GoalCategory, verbose_name="Категория", on_delete=models.PROTECT)
-    user = models.ForeignKey(User, verbose_name='Автор', on_delete=models.PROTECT)
-    status = models.PositiveSmallIntegerField(verbose_name='Статус', choices=Status.choices, default=Status.to_do)
-    priority = models.PositiveSmallIntegerField(verbose_name='Приоритет', choices=Priority.choices,
-                                                default=Priority.medium)
-    due_date = models.DateTimeField(verbose_name='Дата дедлайн')
-    is_deleted = models.BooleanField(default=False, verbose_name='Удалена')
+    title: str = models.CharField(verbose_name="Название", max_length=255, unique=True)
+    description: str = models.CharField(verbose_name='Описание', max_length=255, null=True, blank=True)
+    category: GoalCategory = models.ForeignKey(GoalCategory, verbose_name="Категория", on_delete=models.PROTECT)
+    user: User = models.ForeignKey(User, verbose_name='Автор', on_delete=models.PROTECT)
+    status: int = models.PositiveSmallIntegerField(verbose_name='Статус', choices=Status.choices, default=Status.to_do)
+    priority: int = models.PositiveSmallIntegerField(verbose_name='Приоритет', choices=Priority.choices,
+                                                     default=Priority.medium)
+    due_date: datetime = models.DateTimeField(verbose_name='Дата дедлайн')
+    is_deleted: bool = models.BooleanField(default=False, verbose_name='Удалена')
 
     def __str__(self):
         return self.title
@@ -130,9 +132,9 @@ class GoalComment(DateFieldsMixin):
         verbose_name = "Комментраий"
         verbose_name_plural = "Комментраии"
 
-    user = models.ForeignKey(User, verbose_name="Автор коментария", on_delete=models.CASCADE)
-    text = models.TextField(verbose_name='Комментарий')
-    goal = models.ForeignKey(Goal, verbose_name='Цель', on_delete=models.CASCADE)
+    user: User = models.ForeignKey(User, verbose_name="Автор коментария", on_delete=models.CASCADE)
+    text: str = models.TextField(verbose_name='Комментарий')
+    goal: Goal = models.ForeignKey(Goal, verbose_name='Цель', on_delete=models.CASCADE)
 
     def __str__(self):
         return f"коментарий к {self.goal.title}"

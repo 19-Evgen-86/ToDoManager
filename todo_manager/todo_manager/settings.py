@@ -121,13 +121,14 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Yekaterinburg'
 
 USE_I18N = True
 
@@ -156,7 +157,9 @@ SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
 SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
 SOCIAL_AUTH_VK_EXTRA_DATA = [('email', 'email')]
 
-TG_TOKEN = '5425707450:AAFKjl4RtyTh4CjrkLnnWXq0Xs0dl6EkC-4'
+TG_TOKEN = os.getenv('TG_TOKEN')
+
+# os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 #
 # LOGGING = {
 #     'version': 1,

@@ -42,7 +42,8 @@ class GoalCategoryListView(ListAPIView):
     filterset_fields = ['board', "user"]
 
     def get_queryset(self):
-        return GoalCategory.objects.filter(is_deleted=False, board__participants__user=self.request.user.id)
+        return GoalCategory.objects.prefetch_related('participants').filter(is_deleted=False,
+                                                                            board__participants__user=self.request.user.id)
 
 
 class GoalsCategoryView(RetrieveUpdateDestroyAPIView):
@@ -54,7 +55,8 @@ class GoalsCategoryView(RetrieveUpdateDestroyAPIView):
     serializer_class = GoalsCategorySerializer
 
     def get_queryset(self):
-        return GoalCategory.objects.filter(is_deleted=False, board__participants__user=self.request.user.id)
+        return GoalCategory.objects.prefetch_related('board__participants').filter(is_deleted=False,
+                                                                            board__participants__user=self.request.user.id)
 
     def perform_destroy(self, instance):
         instance.is_deleted = True
@@ -72,7 +74,7 @@ class GoalCreateView(CreateAPIView):
     View для создания цели
     """
     model = Goal
-    permission_classes = [IsAuthenticated, PermissionsCU]
+    permission_classes = [IsAuthenticated, BoardPermissions, PermissionsCU]
     serializer_class = GoalCreateSerializer
 
 
@@ -91,19 +93,21 @@ class GoalsListView(ListAPIView):
     search_fields = ['title']
 
     def get_queryset(self):
-        return Goal.objects.filter(is_deleted=False, category__board__participants__user=self.request.user.id)
+        return Goal.objects.select_related('user', 'category_board').filter(is_deleted=False,
+                                                                            category__board__participants__user=self.request.user.id)
 
 
 class GoalsView(RetrieveUpdateDestroyAPIView):
     """
-    View  для отображения, изменеия и удаления цели
+    View для отображения, изменеия и удаления цели
     """
     model = Goal
     permission_classes = [IsAuthenticated, PermissionsCU]
     serializer_class = GoalsSerializer
 
     def get_queryset(self):
-        return Goal.objects.filter(is_deleted=False, category__board__participants__user=self.request.user.id)
+        return Goal.objects.select_related('user', 'category__board').filter(is_deleted=False,
+                                                                             category__board__participants__user=self.request.user.id)
 
     def perform_destroy(self, instance):
         instance.is_deleted = True
@@ -131,7 +135,8 @@ class GoalsCommentListView(ListAPIView):
     ordering = ["-created"]
 
     def get_queryset(self):
-        return GoalComment.objects.all()
+        return GoalComment.objects.select_related('goal__category__board', 'user').filter(
+            goal__category__board__participants__user_id=self.request.user.id)
 
 
 class GoalsCommentView(RetrieveUpdateDestroyAPIView):
@@ -140,7 +145,8 @@ class GoalsCommentView(RetrieveUpdateDestroyAPIView):
     serializer_class = GoalsCommentsSerializer
 
     def get_queryset(self):
-        return GoalComment.objects.all()
+        return GoalComment.objects.select_related('goal__category__board', 'user').filter(
+            goal__category__board__participants__user_id=self.request.user.id)
 
 
 class BoardCreateView(CreateAPIView):
@@ -180,6 +186,7 @@ class BoardListView(ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = BoardListSerializer
     filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['title']
     ordering = ["title"]
 
     def get_queryset(self):

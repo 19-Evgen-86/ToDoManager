@@ -1,0 +1,61 @@
+import factory
+import factory.fuzzy as fuzzy
+from factory.django import DjangoModelFactory
+
+from core.models import User
+from goals.models import Goal, Board, GoalCategory, BoardParticipant, GoalComment
+
+ROLE_IDS = [x for x in BoardParticipant.Role]
+
+
+class UserFactory(DjangoModelFactory):
+    class Meta:
+        model = User
+
+    username = factory.Faker("name")
+
+    password = factory.PostGenerationMethodCall('set_password', str(factory.Faker("password")))
+
+
+class BoardFactory(DjangoModelFactory):
+    class Meta:
+        model = Board
+
+    title = factory.Faker('word')
+
+
+class BoardParticipantFactory(DjangoModelFactory):
+    class Meta:
+        model = BoardParticipant
+
+    board = factory.SubFactory(BoardFactory)
+    user = factory.SubFactory(UserFactory)
+    role = fuzzy.FuzzyChoice(ROLE_IDS)
+
+
+class GoalCategoryFactory(DjangoModelFactory):
+    class Meta:
+        model = GoalCategory
+
+    title = factory.Faker('word')
+    user = factory.SubFactory(UserFactory)
+    board = factory.SubFactory(BoardFactory)
+
+
+class GoalFactory(DjangoModelFactory):
+    class Meta:
+        model = Goal
+
+    title = factory.Faker("word")
+    category = factory.SubFactory(GoalCategoryFactory)
+    user = factory.SubFactory(UserFactory)
+    due_date = factory.Faker("date")
+
+
+class GoalCommentFactory(DjangoModelFactory):
+    class Meta:
+        model = GoalComment
+
+    user = factory.SubFactory(UserFactory)
+    text = factory.Faker('word')
+    goal = factory.SubFactory(GoalFactory)

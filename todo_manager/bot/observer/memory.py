@@ -5,6 +5,9 @@ from bot.observer.base import Storage, StorageData
 
 
 class MemoryStorage(Storage):
+    """
+    Класс для хранеия состояния бота и данных пользователя
+    """
     def __init__(self):
         self.data: dict[int, StorageData] = {}
 

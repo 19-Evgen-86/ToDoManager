@@ -7,3 +7,5 @@ nginx
 .dockerignore
 .gitignore
 .github
+
+/todo_manager/static/

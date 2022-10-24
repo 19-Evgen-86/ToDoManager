@@ -6,6 +6,10 @@ from pydantic import BaseModel
 
 
 class Storage(ABC):
+    """
+        базовый класс для хранеия состояния бота и данных пользователя
+    """
+
     @abstractmethod
     def get_state(self, chat_id: int) -> Optional[Enum]:
         raise NotImplementedError
@@ -32,11 +36,17 @@ class Storage(ABC):
 
 
 class StorageData(BaseModel):
+    """
+    Модель данных для состояния бота
+    """
     data: dict = {}
     state: Optional[Enum]
 
 
 class State(Enum):
+    """
+    Состояния бота
+    """
     CATEGORY_LIST_SELECTED = auto()
     CATEGORY_NUM = auto()
 

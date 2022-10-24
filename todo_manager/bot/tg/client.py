@@ -1,11 +1,12 @@
-import re
+import requests
 
 from bot.tg.dc import GetUpdatesResponse, SendMessageResponse
-import requests
-import marshmallow_dataclass
 
 
 class TgClient:
+    """
+    Класс клиента бота
+    """
     def __init__(self, token: str):
         self.token = token
 
@@ -14,7 +15,6 @@ class TgClient:
 
     def get_updates(self, offset: int = 0, timeout: int = 60) -> GetUpdatesResponse:
         cl = requests.get(self.get_url('getUpdates'), json={'offset': offset, 'timeout': timeout})
-
         return GetUpdatesResponse(**cl.json())
 
     def send_message(self, chat_id: int, text: str) -> SendMessageResponse:
