@@ -55,7 +55,7 @@ class GoalsCategoryView(RetrieveUpdateDestroyAPIView):
     serializer_class = GoalsCategorySerializer
 
     def get_queryset(self):
-        return GoalCategory.objects.prefetch_related('participants').filter(is_deleted=False,
+        return GoalCategory.objects.prefetch_related('board__participants').filter(is_deleted=False,
                                                                             board__participants__user=self.request.user.id)
 
     def perform_destroy(self, instance):
@@ -106,8 +106,8 @@ class GoalsView(RetrieveUpdateDestroyAPIView):
     serializer_class = GoalsSerializer
 
     def get_queryset(self):
-        return Goal.objects.select_related('user', 'category_board').filter(is_deleted=False,
-                                                                            category__board__participants__user=self.request.user.id)
+        return Goal.objects.select_related('user', 'category__board').filter(is_deleted=False,
+                                                                             category__board__participants__user=self.request.user.id)
 
     def perform_destroy(self, instance):
         instance.is_deleted = True

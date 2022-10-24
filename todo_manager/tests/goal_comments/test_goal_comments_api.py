@@ -1,9 +1,10 @@
 from django.urls import reverse
-from django.utils import timezone
+from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
-from goals.models import BoardParticipant
-from tests.factories import UserFactory, GoalFactory, BoardParticipantFactory, BoardFactory, GoalCategoryFactory
+from goals.models import BoardParticipant, GoalComment
+from tests.factories import UserFactory, GoalFactory, BoardParticipantFactory, BoardFactory, GoalCategoryFactory, \
+    GoalCommentFactory
 
 
 # DJANGO_SETTINGS_MODULE=todo_manager.settings
@@ -24,4 +25,14 @@ class GoalCommentAPITestCase(APITestCase):
         data = {'text': 'test_comment', 'goal': goal.id}
 
         response = self.client.post(reverse('goal_comment_create'), data)
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_goal_comment_retrieve(self):
+        board = BoardFactory()
+        BoardParticipantFactory(board=board, user=self.user, role=BoardParticipant.Role.owner)
+        category = GoalCategoryFactory(board=board, user=self.user)
+        goal = GoalFactory(user=self.user, category=category)
+        goal_comments: GoalComment = GoalCommentFactory(goal=goal, user=self.user)
+        response = self.client.get(reverse('goal_comment_view', kwargs={'pk': goal_comments.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+

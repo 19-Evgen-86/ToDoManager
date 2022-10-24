@@ -44,3 +44,21 @@ class BoardAPITestCase(APITestCase):
         BoardParticipantFactory(board=board, user=self.user, role=BoardParticipant.Role.owner)
         response = self.client.get(reverse('board_view', kwargs={'pk': board.pk}))
         self.assertEqual(response.status_code, 200)
+
+    def test_retrieve_update_board(self):
+        board = BoardFactory()
+        BoardParticipantFactory(board=board, user=self.user, role=BoardParticipant.Role.owner)
+
+        response = self.client.put(reverse('board_view', kwargs={'pk': board.pk}),
+                                   {"title": "new_title", 'participants': []})
+        self.assertEqual(response.status_code, 200)
+        board.refresh_from_db(fields=('title',))
+        self.assertEqual(board.title, 'new_title')
+
+    def test_retrieve_update_board_reader(self):
+        board = BoardFactory()
+        BoardParticipantFactory(board=board, user=self.user, role=BoardParticipant.Role.reader)
+
+        response = self.client.put(reverse('board_view', kwargs={'pk': board.pk}),
+                                   {"title": "new_title", 'participants': []})
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
