@@ -52,7 +52,6 @@ jobs:
           echo 'TG_TOKEN'=${{ secrets.TG_TOKEN }} >> deploy/.env
           cat docker-compose-ci.yaml | envsubst > deploy/docker-compose.yaml
           cp -R ./nginx/ deploy/
-          cp -R ./todo_manager/static/ deploy/
       - name: copy to server
         uses: appleboy/scp-action@master
         with:
@@ -70,5 +69,6 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             cd todomanager
+            echo 'yes' | python todo_manager/manage.py collectstatic
             docker-compose up -d
 
